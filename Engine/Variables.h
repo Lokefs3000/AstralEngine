@@ -30,4 +30,9 @@
 #ifdef ENGINE_EXPORTS
 #define EXPOSE_ENGINE
 #define EXPOSE_WINDOW
+#define EXPOSE_CONTEXT
+#define EXPOSE_RENDERER
+#define EXPOSE_D11_UTILS
 #endif
+
+#define DEFINED_AS template<typename T> T* As() { return (T*)this; }

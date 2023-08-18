@@ -1,2 +1,5 @@
 # AstralEngine
- Custom game engine for my projects.
+### Internal names
+* gl = OpenGL<br/>
+* d11 = Direct3D11<br/>
+* es = OpenGL ES<br/>

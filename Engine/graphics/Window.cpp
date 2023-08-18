@@ -19,5 +19,10 @@ Window::~Window()
 
 bool Window::WasCloseRequested()
 {
-    return false;
+    return m_CloseRequested;
+}
+
+SDL_Window* Window::GetInternalWindow()
+{
+    return m_Window;
 }

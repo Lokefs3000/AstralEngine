@@ -19,4 +19,10 @@ public:
 	~Window();
 
 	bool WasCloseRequested();
+
+#ifdef EXPOSE_WINDOW
+	SDL_Window* GetInternalWindow();
+#endif
+
+	DEFINED_AS
 };
