@@ -1,4 +1,5 @@
 #include <core/Engine.h>
+#include <core/EngineLayer.h>
 
 #define WIN32 //IDK
 #ifdef WIN32
@@ -8,6 +9,16 @@
 #include "Library.h"
 #endif
 
+class EditorLayer : public IEngineLayer {
+private:
+
+public:
+    void OnInitialize() override;
+    void OnFrame() override;
+    void OnLateFrame() override;
+    void OnExit() override;
+};
+
 int main()
 {
 #ifdef WIN32
@@ -15,15 +26,29 @@ int main()
     std::unique_ptr<Library> engineLib = std::make_unique<Library>("core\\Engine.dll");
 #endif
 
-    std::unique_ptr<Engine> engine = std::make_unique<Engine>();
+   Engine engine = Engine();
 
-    engine->Initialize();
-    engine->Run();
-    engine->Shutdown();
+   engine.AddEngineLayer<EditorLayer>();
 
-    engine.reset();
-    engineLib.reset();
-    sdl3Lib.reset();
+   engine.Initialize();
+   engine.Run();
+   engine.Shutdown();
 
     return 0;
+}
+
+void EditorLayer::OnInitialize()
+{
+}
+
+void EditorLayer::OnFrame()
+{
+}
+
+void EditorLayer::OnLateFrame()
+{
+}
+
+void EditorLayer::OnExit()
+{
 }

@@ -10,6 +10,14 @@
 #include "graphics/d11/D11Renderer.h"
 #endif
 
+Engine::Engine()
+{
+}
+
+Engine::~Engine()
+{
+}
+
 void Engine::Initialize()
 {
 	GraphicsAPI pApi = ApiUtils::GetAPI();
@@ -68,6 +76,9 @@ void Engine::Shutdown()
 	}
 
 	EngineLayers.clear();
+
+	m_Renderer->ShutdownRenderer();
+	m_GraphicsContext->ShutdownContext();
 
 	m_Renderer.reset();
 	m_GraphicsContext.reset();
