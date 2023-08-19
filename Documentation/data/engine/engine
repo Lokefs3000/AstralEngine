@@ -1,0 +1,13 @@
+###Engine
+##The core engine class.
+#This class is an alternative way to get some variables and other specific variables.
+func$>graphics/window<GetWindow()
+func#Get the core window that displays the engine.
+func$>graphics/window<GetContext()
+func#Get the graphics context or API being used.
+func$>graphics/window<GetRenderer()
+func#Get the engines abstract current renderer.
+func$>graphics/window<GetPackageManager()
+func#Get the projects package manager.
+func$>graphics/window<GetConfig()
+func#Get the projects loaded configuration.

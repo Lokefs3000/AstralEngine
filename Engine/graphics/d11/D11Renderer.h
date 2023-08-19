@@ -27,5 +27,14 @@ public:
 	void InitializeRenderer(std::shared_ptr<Window> window, std::shared_ptr<IGraphicsContext> graphicsContext) override;
 	void ShutdownRenderer() override;
 
+	void ClearScreen();
+	void PresentScreen();
+
+#ifdef EXPOSE_RENDERER
+	IDXGISwapChain* GetSwapChain() { return m_SwapChain.Get(); }
+	ID3D11Texture2D* GetBackBuffer() { return m_BackBufferTexture.Get(); }
+	ID3D11RenderTargetView* GetBackBufferView() { return m_BackBufferView.Get(); }
+#endif
+
 	DEFINED_AS
 };

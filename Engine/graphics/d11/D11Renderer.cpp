@@ -13,6 +13,9 @@ void D11Renderer::GetBackBuffers()
 	backViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	
 	D11PerformCheck(m_Context->GetDevice()->CreateRenderTargetView(m_BackBufferTexture.Get(), &backViewDesc, m_BackBufferView.GetAddressOf()), true, "SwapChain resizing failed!");
+
+	m_Context->GetImmediate()->OMSetRenderTargets(1, m_BackBufferView.GetAddressOf(), NULL);
+	m_Context->GetDeferred()->OMSetRenderTargets(1, m_BackBufferView.GetAddressOf(), NULL);
 }
 
 void D11Renderer::RefreshBuffers(uint32_t w, uint32_t h)
@@ -56,4 +59,22 @@ void D11Renderer::InitializeRenderer(std::shared_ptr<Window> window, std::shared
 void D11Renderer::ShutdownRenderer()
 {
 	m_Context = NULL;
+}
+
+void D11Renderer::ClearScreen()
+{
+	float clear[4] = { 1.0f, 0.0f, 1.0f, 1.0f };
+	m_Context->GetDeferred()->ClearRenderTargetView(m_BackBufferView.Get(), clear);
+}
+
+void D11Renderer::PresentScreen()
+{
+	ID3D11CommandList* cmdList = NULL;
+	D11PerformCheck(m_Context->GetDeferred()->FinishCommandList(true, &cmdList), false, "Failed to finish command list!");
+	if (!cmdList == NULL) {
+		m_Context->GetImmediate()->ExecuteCommandList(cmdList, false);
+		cmdList->Release();
+	}
+
+	D11PerformCheck(m_SwapChain->Present(1, 0), false, "Failed to present SwapChain");
 }

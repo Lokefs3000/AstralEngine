@@ -71,8 +71,12 @@ void Engine::Run()
 			m_MainWindow->FeedEvent(Event);
 		}
 
+		m_Renderer->ClearScreen();
+
 		for (auto layer : EngineLayers)
 			layer->OnFrame();
+
+		m_Renderer->PresentScreen();
 
 		for (auto layer : EngineLayers)
 			layer->OnLateFrame();
