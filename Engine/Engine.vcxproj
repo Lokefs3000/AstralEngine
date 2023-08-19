@@ -177,17 +177,21 @@
     <ClInclude Include="graphics\GraphicsContext.h" />
     <ClInclude Include="graphics\Renderer.h" />
     <ClInclude Include="graphics\Window.h" />
+    <ClInclude Include="loader\Configurations.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="utils\ApiUtils.h" />
     <ClInclude Include="utils\D11Utils.h" />
+    <ClInclude Include="utils\StringUtils.h" />
     <ClInclude Include="Variables.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\Engine.cpp" />
+    <ClCompile Include="core\EngineLayer.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="graphics\d11\D11GraphicsContext.cpp" />
     <ClCompile Include="graphics\d11\D11Renderer.cpp" />
     <ClCompile Include="graphics\Window.cpp" />
+    <ClCompile Include="loader\Configurations.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -195,6 +199,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="utils\ApiUtils.cpp" />
+    <ClCompile Include="utils\StringUtils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

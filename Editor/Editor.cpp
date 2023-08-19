@@ -9,10 +9,14 @@
 #include "Library.h"
 #endif
 
-class EditorLayer : public IEngineLayer {
-private:
+#include <fstream>
+#include <sstream>
 
+class EditorLayer : public EngineLayer {
 public:
+    using EngineLayer::EngineLayer;
+
+    void PreInitialize() override;
     void OnInitialize() override;
     void OnFrame() override;
     void OnLateFrame() override;
@@ -37,8 +41,19 @@ int main()
     return 0;
 }
 
+void EditorLayer::PreInitialize()
+{
+    std::ifstream cfile("editor\\config\\editor.astral");
+    std::stringstream src;
+    src << cfile.rdbuf();
+    cfile.close();
+
+    GetEngine()->LoadProjectConfig(src.str());
+}
+
 void EditorLayer::OnInitialize()
 {
+    
 }
 
 void EditorLayer::OnFrame()

@@ -18,8 +18,18 @@ Engine::~Engine()
 {
 }
 
+void Engine::LoadProjectConfig(std::string config)
+{
+	ProjectConfig = Configurations::LoadConfig(config);
+}
+
 void Engine::Initialize()
 {
+	for (size_t i = 0; i < EngineLayers.size(); i++)
+	{
+		EngineLayers[i]->PreInitialize();
+	}
+
 	GraphicsAPI pApi = ApiUtils::GetAPI();
 
 	switch (pApi)
@@ -38,7 +48,8 @@ void Engine::Initialize()
 		break;
 	}
 
-	m_MainWindow = std::make_shared<Window>(800, 600, "Temp", true, pApi != GraphicsAPI::Direct3D11 ? true : false);
+	std::shared_ptr<ConfigObject> windowOptions = ProjectConfig->GetChild("ProjectConfig")->GetChild("WindowSettings");
+	m_MainWindow = std::make_shared<Window>(windowOptions->GetValue<int>("Width"), windowOptions->GetValue<int>("Height"), StringUtils::KeywordFormat(windowOptions->GetValue<std::string>("Title")), true, pApi != GraphicsAPI::Direct3D11 ? true : false);
 
 	m_GraphicsContext->InitializeContext(m_MainWindow);
 	m_Renderer->InitializeRenderer(m_MainWindow, m_GraphicsContext);

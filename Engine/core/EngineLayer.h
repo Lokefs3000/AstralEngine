@@ -1,9 +1,20 @@
 #pragma once
 
-__interface IEngineLayer {
+#include "Variables.h"
+
+class Engine;
+
+class EXPORT EngineLayer {
+private:
+	Engine* m_Engine;
 public:
-	virtual void OnInitialize();
-	virtual void OnFrame();
-	virtual void OnLateFrame();
-	virtual void OnExit();
+	EngineLayer(Engine* engine);
+
+	Engine* GetEngine();
+
+	virtual void PreInitialize() = 0;
+	virtual void OnInitialize() = 0;
+	virtual void OnFrame() = 0;
+	virtual void OnLateFrame() = 0;
+	virtual void OnExit() = 0;
 };
