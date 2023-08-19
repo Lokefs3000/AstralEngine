@@ -17,8 +17,8 @@ public:
 		DONT CALL!
 		Use "D11PerformCheck" macro instead!
 	*/
-	template<typename Args>
-	static void PerformCheck(HRESULT result, const char* __function, uint32_t __line, bool fatal, Args args...);
+	template<typename... Args>
+	static void PerformCheck(HRESULT result, const char* __function, uint32_t __line, bool fatal, Args... args);
 #endif
 };
 
@@ -32,27 +32,26 @@ public:
 */
 #define D11PerformCheck(result, fatal, ...) D11Utils::PerformCheck(result, __FUNCTION__, __LINE__, fatal, __VA_ARGS__);
 
-template<typename Args>
-inline void D11Utils::PerformCheck(HRESULT result, const char* __function, uint32_t __line, bool fatal, Args args ...)
+template<typename... Args>
+inline void D11Utils::PerformCheck(HRESULT result, const char* __function, uint32_t __line, bool fatal, Args... args)
 {
-	std::string outputMsg = "[" + __function + ":" + __line + "]: ";
+	if (SUCCEEDED(result))
+		return;
+
+	std::string outputMsg = "[" + std::string(__function) + ":" + std::to_string(__line) + "]: ";
 
 	([&]
 		{
-			auto id = typeid(args);
-			if (id != typeid(std::string))
-				outputMsg += std::to_string(args);
-			else
-				outputMsg += args;
+			outputMsg += args;
 		}(), ...);
 
-	_com_error err(hr);
+	_com_error err(result);
 	LPCTSTR errMsg = err.ErrorMessage();
 
 	std::wstring wStr = errMsg;
-	std::string err = std::string(wStr.begin(), wStr.end());
+	std::string errstr = std::string(wStr.begin(), wStr.end());
 
-	outputMsg += "\nError message: " + err;
+	outputMsg += "\nError message: " + errstr;
 
 	if (fatal) {
 		MessageBoxA(NULL, outputMsg.c_str(), "A fatal error occured!", MB_OK | MB_ICONERROR);

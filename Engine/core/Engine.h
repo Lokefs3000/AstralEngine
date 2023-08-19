@@ -5,8 +5,6 @@
 #include "EngineLayer.h"
 
 #ifdef EXPOSE_ENGINE
-#include <vector>
-#include <memory>
 #include <type_traits>
 #include "utils/ApiUtils.h"
 
@@ -15,7 +13,10 @@ __interface IGraphicsContext;
 __interface IRenderer;
 #endif
 
-class Engine {
+#include <vector>
+#include <memory>
+
+class EXPORT Engine {
 private:
 #ifdef EXPOSE_ENGINE
 	std::shared_ptr<Window> m_MainWindow;
@@ -24,7 +25,7 @@ private:
 	std::shared_ptr<IRenderer> m_Renderer;
 #endif
 public:
-	std::vector<std::shared_ptr<IEngineLayer>> EngineLayers;
+	std::vector<std::shared_ptr<IEngineLayer>> EngineLayers = std::vector<std::shared_ptr<IEngineLayer>>();
 
 	template<typename T>
 	std::shared_ptr<T> AddEngineLayer();

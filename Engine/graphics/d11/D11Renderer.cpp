@@ -6,7 +6,7 @@
 
 void D11Renderer::GetBackBuffers()
 {
-	m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)m_BackBufferTexture.Get());
+	D11PerformCheck(m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)m_BackBufferTexture.GetAddressOf()), false, "Failed to get backbuffer!");
 
 	D3D11_RENDER_TARGET_VIEW_DESC backViewDesc{};
 	backViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -20,7 +20,7 @@ void D11Renderer::RefreshBuffers(uint32_t w, uint32_t h)
 	m_BackBufferTexture.Reset();
 	m_BackBufferView.Reset();
 
-	m_SwapChain->ResizeBuffers(2, w, h, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	D11PerformCheck(m_SwapChain->ResizeBuffers(2, w, h, DXGI_FORMAT_R8G8B8A8_UNORM, 0), false, "Failed to resize buffers!");
 
 	GetBackBuffers();
 }
@@ -45,8 +45,10 @@ void D11Renderer::InitializeRenderer(std::shared_ptr<Window> window, std::shared
 	swapChainDesc.OutputWindow = windowInfo.info.win.window;
 	swapChainDesc.Windowed = true;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.SampleDesc.Quality = 0;
 
-	ctx->GetFactory()->CreateSwapChain(ctx->GetDevice(), &swapChainDesc, m_SwapChain.GetAddressOf());
+	D11PerformCheck(ctx->GetFactory()->CreateSwapChain(ctx->GetDevice(), &swapChainDesc, m_SwapChain.GetAddressOf()), true, "Failed to create SwapChain!");
 
 	GetBackBuffers();
 }

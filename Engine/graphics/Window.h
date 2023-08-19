@@ -21,6 +21,7 @@ public:
 	bool WasCloseRequested();
 
 #ifdef EXPOSE_WINDOW
+	void FeedEvent(SDL_Event& Event);
 	SDL_Window* GetInternalWindow();
 #endif
 

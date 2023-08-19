@@ -22,6 +22,12 @@ bool Window::WasCloseRequested()
     return m_CloseRequested;
 }
 
+void Window::FeedEvent(SDL_Event& Event)
+{
+    if (Event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
+        m_CloseRequested = true;
+}
+
 SDL_Window* Window::GetInternalWindow()
 {
     return m_Window;

@@ -12,8 +12,6 @@
 
 void Engine::Initialize()
 {
-	m_MainWindow = std::make_shared<Window>();
-
 	GraphicsAPI pApi = ApiUtils::GetAPI();
 
 	switch (pApi)
@@ -32,6 +30,8 @@ void Engine::Initialize()
 		break;
 	}
 
+	m_MainWindow = std::make_shared<Window>(800, 600, "Temp", true, pApi != GraphicsAPI::Direct3D11 ? true : false);
+
 	m_GraphicsContext->InitializeContext(m_MainWindow);
 	m_Renderer->InitializeRenderer(m_MainWindow, m_GraphicsContext);
 
@@ -43,6 +43,21 @@ void Engine::Initialize()
 
 void Engine::Run()
 {
+	SDL_Event Event;
+
+	while (!m_MainWindow->WasCloseRequested())
+	{
+		while (SDL_PollEvent(&Event))
+		{
+			m_MainWindow->FeedEvent(Event);
+		}
+
+		for (auto layer : EngineLayers)
+			layer->OnFrame();
+
+		for (auto layer : EngineLayers)
+			layer->OnLateFrame();
+	}
 }
 
 void Engine::Shutdown()
@@ -51,4 +66,10 @@ void Engine::Shutdown()
 	{
 		EngineLayers[i]->OnExit();
 	}
+
+	EngineLayers.clear();
+
+	m_Renderer.reset();
+	m_GraphicsContext.reset();
+	m_MainWindow.reset();
 }
