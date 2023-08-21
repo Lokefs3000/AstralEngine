@@ -78,3 +78,8 @@ void D11Renderer::PresentScreen()
 
 	D11PerformCheck(m_SwapChain->Present(1, 0), false, "Failed to present SwapChain");
 }
+
+GraphicsAPI D11Renderer::GetAPI()
+{
+	return GraphicsAPI::Direct3D11;
+}

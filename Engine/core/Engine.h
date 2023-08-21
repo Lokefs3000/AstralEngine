@@ -35,6 +35,10 @@ public:
 
 	void LoadProjectConfig(std::string config);
 
+	std::shared_ptr<Window> GetWindow() { return m_MainWindow; };
+	std::shared_ptr<IGraphicsContext> GetContext() { return m_GraphicsContext; }
+	std::shared_ptr<IRenderer> GetRenderer() { return m_Renderer; }
+
 	void Initialize();
 	void Run();
 	void Shutdown();

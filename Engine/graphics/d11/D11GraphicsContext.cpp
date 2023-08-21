@@ -33,3 +33,8 @@ void D11GraphicsContext::InitializeContext(std::shared_ptr<Window> window)
 void D11GraphicsContext::ShutdownContext()
 {
 }
+
+GraphicsAPI D11GraphicsContext::GetAPI()
+{
+	return GraphicsAPI::Direct3D11;
+}

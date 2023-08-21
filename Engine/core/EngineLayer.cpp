@@ -10,3 +10,7 @@ Engine* EngineLayer::GetEngine()
 {
     return m_Engine;
 }
+
+void EngineLayer::OnEvent(SDL_Event& Event)
+{
+}

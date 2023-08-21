@@ -69,6 +69,9 @@ void Engine::Run()
 		while (SDL_PollEvent(&Event))
 		{
 			m_MainWindow->FeedEvent(Event);
+
+			for (auto layer : EngineLayers)
+				layer->OnEvent(Event);
 		}
 
 		m_Renderer->ClearScreen();

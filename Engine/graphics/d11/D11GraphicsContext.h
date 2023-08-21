@@ -11,6 +11,8 @@
 using namespace Microsoft::WRL;
 #endif
 
+#include <utils/ApiUtils.h>
+
 class D11GraphicsContext : public IGraphicsContext {
 private:
 #ifdef EXPOSE_CONTEXT
@@ -29,6 +31,8 @@ public:
 	ID3D11DeviceContext* GetDeferred() { return m_DeferredContext.Get(); };
 	IDXGIFactory* GetFactory() { return m_Factory.Get(); };
 #endif
+
+	GraphicsAPI GetAPI() override;
 
 	DEFINED_AS
 };

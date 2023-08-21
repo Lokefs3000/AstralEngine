@@ -15,4 +15,6 @@ public:
 
 	virtual void ClearScreen();
 	virtual void PresentScreen();
+
+	virtual GraphicsAPI GetAPI();
 };

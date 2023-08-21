@@ -174,11 +174,18 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="graphics\d11\D11GraphicsContext.h" />
     <ClInclude Include="graphics\d11\D11Renderer.h" />
+    <ClInclude Include="graphics\d11\managers\D11TextureManager.h" />
+    <ClInclude Include="graphics\d11\resources\D11Texture2D.h" />
     <ClInclude Include="graphics\GraphicsContext.h" />
+    <ClInclude Include="graphics\managers\TextureManager.h" />
+    <ClInclude Include="graphics\managers\TextureRef.h" />
     <ClInclude Include="graphics\Renderer.h" />
+    <ClInclude Include="graphics\resources\Texture2D.h" />
     <ClInclude Include="graphics\Window.h" />
     <ClInclude Include="loader\Configurations.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="resources\AssetManagerRaw.h" />
+    <ClInclude Include="threading\ThreadPool.h" />
     <ClInclude Include="utils\ApiUtils.h" />
     <ClInclude Include="utils\D11Utils.h" />
     <ClInclude Include="utils\StringUtils.h" />
@@ -190,6 +197,8 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="graphics\d11\D11GraphicsContext.cpp" />
     <ClCompile Include="graphics\d11\D11Renderer.cpp" />
+    <ClCompile Include="graphics\d11\managers\D11TextureManager.cpp" />
+    <ClCompile Include="graphics\d11\resources\D11Texture2D.cpp" />
     <ClCompile Include="graphics\Window.cpp" />
     <ClCompile Include="loader\Configurations.cpp" />
     <ClCompile Include="pch.cpp">
@@ -198,6 +207,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="resources\AssetManagerRaw.cpp" />
+    <ClCompile Include="threading\ThreadPool.cpp" />
     <ClCompile Include="utils\ApiUtils.cpp" />
     <ClCompile Include="utils\StringUtils.cpp" />
   </ItemGroup>

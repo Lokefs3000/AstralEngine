@@ -22,6 +22,11 @@ bool Window::WasCloseRequested()
     return m_CloseRequested;
 }
 
+void Window::SetTitle(std::string newTitle)
+{
+    SDL_SetWindowTitle(m_Window, newTitle.c_str());
+}
+
 void Window::FeedEvent(SDL_Event& Event)
 {
     if (Event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)

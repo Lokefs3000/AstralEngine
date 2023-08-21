@@ -33,6 +33,9 @@
 #define EXPOSE_CONTEXT
 #define EXPOSE_RENDERER
 #define EXPOSE_D11_UTILS
+#define EXPOSE_TEXTURE2D
+#define EXPOSE_TEXTURE_MANAGER
+#define LAYER_EVENTS
 #endif
 
 #define DEFINED_AS template<typename T> T* As() { return (T*)this; }
@@ -46,3 +49,5 @@
 #define VERSION_GET_MAJOR(version) version >> 20
 #define VERSION_GET_MINOR(version) (combined >> 10) & 0x3ff
 #define VERSION_GET_PATCH(version) combined & 0x3ff
+
+typedef unsigned char uchar;

@@ -9,6 +9,8 @@ using namespace Microsoft::WRL;
 class D11GraphicsContext;
 #endif
 
+#include <utils/ApiUtils.h>
+
 #include "graphics/Renderer.h"
 
 class D11Renderer : public IRenderer {
@@ -35,6 +37,8 @@ public:
 	ID3D11Texture2D* GetBackBuffer() { return m_BackBufferTexture.Get(); }
 	ID3D11RenderTargetView* GetBackBufferView() { return m_BackBufferView.Get(); }
 #endif
+
+	GraphicsAPI GetAPI() override;
 
 	DEFINED_AS
 };

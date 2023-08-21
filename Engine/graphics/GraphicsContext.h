@@ -4,6 +4,7 @@
 
 #include <memory>
 
+enum class GraphicsAPI;
 class Window;
 
 __interface IGraphicsContext
@@ -11,4 +12,6 @@ __interface IGraphicsContext
 public:
 	virtual void InitializeContext(std::shared_ptr<Window> window);
 	virtual void ShutdownContext();
+
+	virtual GraphicsAPI GetAPI();
 };
