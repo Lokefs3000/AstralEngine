@@ -2,21 +2,19 @@
 
 #include "Variables.h"
 
+#include "AssetManager.h"
+
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <filesystem>
 
-class EXPORT AssetManagerRaw {
+class AssetManagerRaw : public IAssetManager {
 private:
-	std::vector<std::string> m_Resources;
-
 	std::string m_Src;
 public:
-	void Initialize(std::string src);
+	void EXPORT Initialize(std::string src) override;
 
-	void ReloadAssets();
-
-	std::string GetAsset(std::string assetName);
+	std::string EXPORT GetAsset(std::string assetName) override;
 };

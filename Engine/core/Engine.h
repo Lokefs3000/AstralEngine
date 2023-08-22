@@ -10,9 +10,13 @@
 #include "utils/ApiUtils.h"
 #endif
 
+#include "debugging/Stopwatch.h"
+
 class Window;
 __interface IGraphicsContext;
 __interface IRenderer;
+__interface IAssetManager;
+__interface ITextureManager;
 
 #include <vector>
 #include <memory>
@@ -23,9 +27,27 @@ private:
 
 	std::shared_ptr<IGraphicsContext> m_GraphicsContext;
 	std::shared_ptr<IRenderer> m_Renderer;
+
+	std::shared_ptr<IAssetManager> m_AssetManager;
+
+	std::shared_ptr<ITextureManager> m_TextureManager;
+
+	std::string m_ProjectFolder = "";
 public:
 	Engine();
 	~Engine();
+
+	struct StopWatches
+	{
+		StopWatch DeltaWatch;
+		StopWatch RenderWatch;
+		StopWatch AssetWatch;
+		StopWatch TextureWatch;
+		StopWatch LayerWatch;
+		StopWatch LateLayerWatch;
+		StopWatch EventWatch;
+	};
+	StopWatches Watches;
 
 	std::vector<std::shared_ptr<EngineLayer>> EngineLayers = std::vector<std::shared_ptr<EngineLayer>>();
 	std::shared_ptr<ConfigObject> ProjectConfig;
@@ -38,6 +60,8 @@ public:
 	std::shared_ptr<Window> GetWindow() { return m_MainWindow; };
 	std::shared_ptr<IGraphicsContext> GetContext() { return m_GraphicsContext; }
 	std::shared_ptr<IRenderer> GetRenderer() { return m_Renderer; }
+	std::shared_ptr<IAssetManager> GetAssetManager() { return m_AssetManager; }
+	std::shared_ptr<ITextureManager> GetTextureManager() { return m_TextureManager; }
 
 	void Initialize();
 	void Run();

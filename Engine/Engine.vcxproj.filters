@@ -66,16 +66,25 @@
     <ClInclude Include="graphics\resources\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\d11\resources\D11Texture2D.h">
+    <ClInclude Include="graphics\managers\TextureRef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\managers\TextureRef.h">
+    <ClInclude Include="resources\AssetManagerRaw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\d11\resources\D11Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\d11\managers\D11TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resources\AssetManagerRaw.h">
+    <ClInclude Include="resources\AssetManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="debugging\Stopwatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="debugging\StopWatchHigh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,13 +122,13 @@
     <ClCompile Include="threading\ThreadPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="resources\AssetManagerRaw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="graphics\d11\resources\D11Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\d11\managers\D11TextureManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="resources\AssetManagerRaw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

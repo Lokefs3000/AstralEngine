@@ -9,15 +9,16 @@
 #include <string>
 
 __interface IGraphicsContext;
+__interface IAssetManager;
 
-__interface EXPORT ITextureManager {
+__interface ITextureManager {
 public:
-	void Initialize(std::shared_ptr<IGraphicsContext> Context, bool IsThreaded);
-	void Shutdown();
+	void EXPORT Initialize(std::shared_ptr<IGraphicsContext> Context, std::shared_ptr<IAssetManager> Assets, bool IsThreaded);
+	void EXPORT Shutdown();
 
 	TextureRef GetTexture(std::string path);
 	std::shared_ptr<ITexture2D> GetTextureFromRef(TextureRef ref);
 
-	void LookForUnused();
-	void Clear();
+	void EXPORT LookForUnused();
+	void EXPORT Clear();
 };

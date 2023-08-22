@@ -167,6 +167,7 @@
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Library.cpp" />
+    <ClCompile Include="PerformanceViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContentBrowser.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="Library.h" />
+    <ClInclude Include="PerformanceViewer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

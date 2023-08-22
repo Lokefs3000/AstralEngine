@@ -6,7 +6,8 @@
 #ifdef EXPOSE_CONTEXT
 #include <SDL3/SDL_syswm.h>
 #include <wrl/client.h>
-#include <d3d11.h>
+#include <d3d11_3.h>
+#include <dxgidebug.h>
 #include "utils/D11Utils.h"
 using namespace Microsoft::WRL;
 #endif
@@ -31,6 +32,8 @@ public:
 	ID3D11DeviceContext* GetDeferred() { return m_DeferredContext.Get(); };
 	IDXGIFactory* GetFactory() { return m_Factory.Get(); };
 #endif
+
+	static void ObjectReport();
 
 	GraphicsAPI GetAPI() override;
 

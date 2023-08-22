@@ -10,8 +10,8 @@ class Window;
 __interface IGraphicsContext
 {
 public:
-	virtual void InitializeContext(std::shared_ptr<Window> window);
-	virtual void ShutdownContext();
+	virtual void EXPORT InitializeContext(std::shared_ptr<Window> window);
+	virtual void EXPORT ShutdownContext();
 
-	virtual GraphicsAPI GetAPI();
+	virtual EXPORT GraphicsAPI GetAPI();
 };

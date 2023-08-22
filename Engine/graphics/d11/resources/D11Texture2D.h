@@ -11,7 +11,7 @@ using namespace Microsoft::WRL;
 class D11GraphicsContext;
 #endif
 
-class EXPORT D11Texture2D : public ITexture2D {
+class D11Texture2D : public ITexture2D {
 private:
 #ifdef EXPOSE_TEXTURE2D
 	ComPtr<ID3D11Texture2D> m_Texture;
@@ -21,8 +21,8 @@ private:
 
 	bool m_IsInitialized = false;
 public:
-	void Initialize(Texture2DOptions& options) override;
-	void Shutdown() override;
+	void EXPORT Initialize(Texture2DOptions options) override;
+	void EXPORT Shutdown() override;
 
 	bool IsInitialized() { return m_IsInitialized; }
 

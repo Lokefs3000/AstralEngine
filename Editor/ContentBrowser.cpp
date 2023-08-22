@@ -4,12 +4,16 @@ void ContentBrowser::SearchTree(std::shared_ptr<CB_FileTreeElement> Parent, std:
 {
 	for (auto entry : std::filesystem::directory_iterator(Path))
 	{
+		if (!std::filesystem::exists(entry.path()))
+			continue;
+
 		std::shared_ptr<CB_FileTreeElement> element = std::make_shared<CB_FileTreeElement>();
 		element->HasParent = true;
 		element->Id = Id;
 		element->Name = entry.path().string().substr(entry.path().string().find_last_of("\\") + 1);
 
-		SearchTree(element, entry.path().string(), Id);
+		if (std::filesystem::is_directory(entry.path()))
+			SearchTree(element, entry.path().string(), Id);
 
 		m_FileTreeElements.push_back(element);
 		Parent->Children.push_back(element);
@@ -33,20 +37,20 @@ bool ContentBrowser::CustomNode(const char* label, ImGuiTreeNodeFlags flags) {
 	ImGuiContext& g = *GImGui;
 	ImGuiWindow* window = g.CurrentWindow;
 
-	bool small = (flags & ImGuiTreeNodeFlags_Bullet) != ImGuiTreeNodeFlags_Bullet;
+	bool isSmall = (flags & ImGuiTreeNodeFlags_Bullet) != ImGuiTreeNodeFlags_Bullet;
 
 	ImU32 id = window->GetID(label);
 	ImVec2 pos = window->DC.CursorPos;
 	ImRect bbFull(pos, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
 	ImRect bbUse(pos, ImVec2(pos.x + g.FontSize + g.Style.FramePadding.y * 2, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
 	ImRect bb;
-	if (!small)
+	if (!isSmall)
 		bb = ImRect(bbUse.Min, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
 	else
 		bb = ImRect(bbUse.Max, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
 	bool opened = ImGui::TreeNodeBehaviorIsOpen(id);
 	bool hovered, held;
-	if (small) {
+	if (isSmall) {
 		if (ImGui::ButtonBehavior(bbUse, id, &hovered, &held, true))
 			window->DC.StateStorage->SetInt(id, opened ? 0 : 1);
 		if (hovered || held)
@@ -55,7 +59,7 @@ bool ContentBrowser::CustomNode(const char* label, ImGuiTreeNodeFlags flags) {
 
 	// Icon, text
 	float button_sz = g.FontSize + g.Style.FramePadding.y * 2;
-	if (!small) {
+	if (!isSmall) {
 		window->DrawList->AddRectFilled(pos, ImVec2(pos.x + button_sz, pos.y + button_sz), ImColor(255, 255, 255));
 		ImGui::RenderText(ImVec2(pos.x + button_sz + g.Style.ItemInnerSpacing.x, pos.y + g.Style.FramePadding.y), label);
 	}
@@ -72,7 +76,7 @@ bool ContentBrowser::CustomNode(const char* label, ImGuiTreeNodeFlags flags) {
 	return opened;
 }
 
-void ContentBrowser::Render(std::string assets)
+void ContentBrowser::Render(std::shared_ptr<ITextureManager> tm, std::string assets)
 {
 	if (ImGui::Begin("Content browser")) {
 		float W = ImGui::GetContentRegionAvail().x;
@@ -80,16 +84,26 @@ void ContentBrowser::Render(std::string assets)
 		float H = ImGui::GetContentRegionAvail().y;
 
 		if (ImGui::BeginChild("##CB_FileTree", ImVec2(WTree, H), true)) {
-			m_FileTreeElements.clear();
+			if (m_ReProcess <= 0.01f) {
+				try
+				{
+					m_FileTreeElements.clear();
 
-			std::shared_ptr<CB_FileTreeElement> Root = std::make_shared<CB_FileTreeElement>();
-			Root->Name = "Assets";
-			Root->Id = 0;
+					std::shared_ptr<CB_FileTreeElement> Root = std::make_shared<CB_FileTreeElement>();
+					Root->Name = "Assets";
+					Root->Id = 0;
 
-			m_FileTreeElements.push_back(Root);
+					m_FileTreeElements.push_back(Root);
 
-			uint32_t Id = 1;
-			SearchTree(Root, assets, Id);
+					uint32_t Id = 1;
+					SearchTree(Root, assets, Id);
+				}
+				catch (const std::exception& ex)
+				{
+					std::cout << ex.what() << std::endl;
+					m_ReProcess = 0.01f;
+				}
+			}
 
 			SearchTreeElements(m_FileTreeElements[0]);
 		}
@@ -123,30 +137,50 @@ void ContentBrowser::Render(std::string assets)
 			m_LastMaxSize = 0.0f;
 			for (auto entry : std::filesystem::directory_iterator(assets + "\\" + m_FolderDepth))
 			{
-				if (isGrid) {
-					std::string name = entry.path().string();
-					name = name.substr(name.find_last_of("\\") + 1, maxCharacters);
+				std::string name = entry.path().string();
+				name = name.substr(name.find_last_of("\\") + 1, maxCharacters);
 
-					std::string extension = "File";
+				std::string extension = "File";
 
-					if (std::filesystem::is_directory(entry.path())) {
-						extension = "Folder";
+				if (std::filesystem::is_directory(entry.path())) {
+					extension = "Folder";
+				}
+				else {
+					uint32_t find_extension = name.find_last_of(".");
+					if (find_extension != std::string::npos) {
+						extension = name.substr(find_extension);
+						name = name.substr(0, find_extension);
 					}
+				}
+
+				TextureRef texture = NULL;
+
+				if (extension == ".png" || extension == ".jpg" || extension == ".jpeg") {
+					if (m_Textures.count(entry.path().string()))
+						texture = m_Textures[entry.path().string()];
 					else {
-						uint32_t find_extension = name.find_last_of(".");
-						if (find_extension != std::string::npos) {
-							extension = name.substr(find_extension);
-							name = name.substr(0, find_extension);
-						}
-					}
+						auto output = tm->GetTexture(entry.path().string().substr(assets.size()+1));
+						texture = output;
 
+						m_Textures.insert(std::make_pair(entry.path().string(), texture));
+					}
+				}
+
+				if (isGrid) {
 					ImVec2 cPos = ImGui::GetCursorScreenPos();
 					ImVec2 cLocalPos = ImGui::GetCursorPos();
 					ImVec2 size = ImVec2(m_ItemSize, m_ItemSize + (g.FontSize + g.Style.FramePadding.y * 2)) + style.FramePadding * 2.0f;
 
 					drawList->AddRectFilled(cPos, cPos + size, 0x30000000);
 
-					drawList->AddRectFilled(cPos + style.FramePadding, cPos + ImVec2(m_ItemSize, m_ItemSize) + style.FramePadding, 0xffffffff);
+					if (texture == NULL)
+						drawList->AddRectFilled(cPos + style.FramePadding, cPos + ImVec2(m_ItemSize, m_ItemSize) + style.FramePadding, 0xffffffff);
+					else {
+						auto tex_face = tm->GetTextureFromRef(texture);
+						D11Texture2D* texD11 = (D11Texture2D*)tex_face.get();
+
+						drawList->AddImage(texD11->GetResourceView(), cPos + style.FramePadding, cPos + ImVec2(m_ItemSize, m_ItemSize) + style.FramePadding);
+					}
 					
 					float width = m_ItemSize;
 					ImVec2 tSize = ImGui::CalcTextSize(name.c_str());
@@ -167,22 +201,6 @@ void ContentBrowser::Render(std::string assets)
 					}
 				}
 				else {
-					std::string name = entry.path().string();
-					name = name.substr(name.find_last_of("\\") + 1);
-
-					std::string extension = "File";
-
-					if (std::filesystem::is_directory(entry.path())) {
-						extension = "Folder";
-					}
-					else {
-						uint32_t find_extension = name.find_last_of(".");
-						if (find_extension != std::string::npos) {
-							extension = name.substr(find_extension);
-							name = name.substr(0, find_extension);
-						}
-					}
-
 					if (entryNum % 2 == 0) {
 						ImVec2 cPos = ImGui::GetCursorScreenPos(); //AddRectFilled is in screen coordinates so get cursor screen pos.
 						drawList->AddRectFilled(cPos, cPos + ImVec2(AvailableSpaceW, g.FontSize + g.Style.FramePadding.y * 2), 0x20000000);	//Yes i did write the colors in hex
@@ -201,4 +219,8 @@ void ContentBrowser::Render(std::string assets)
 		ImGui::EndChild();
 	}
 	ImGui::End();
+
+	if (m_ReProcess <= 0.0f)
+		m_ReProcess = 10.0f; 
+	m_ReProcess -= 0.016f;
 }

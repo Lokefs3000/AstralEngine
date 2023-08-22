@@ -32,6 +32,22 @@ void D11GraphicsContext::InitializeContext(std::shared_ptr<Window> window)
 
 void D11GraphicsContext::ShutdownContext()
 {
+	/*ID3D11Debug* debug = NULL;
+	D11PerformCheck(m_Device->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug), false, "Failed to get ID3D11Debug.");
+	if (debug != NULL) {
+		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		debug->Release();
+	}*/
+}
+
+void D11GraphicsContext::ObjectReport()
+{
+	IDXGIDebug1* debugDX = NULL;
+	D11PerformCheck(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debugDX)), false, "Failed to get IDXGIDebug1.");
+	if (debugDX != NULL) {
+		debugDX->ReportLiveObjects({ 0xe48ae283, 0xda80, 0x490b, 0x87, 0xe6, 0x43, 0xe9, 0xa9, 0xcf, 0xda, 0x8 }, DXGI_DEBUG_RLO_ALL);
+		debugDX->Release();
+	}
 }
 
 GraphicsAPI D11GraphicsContext::GetAPI()

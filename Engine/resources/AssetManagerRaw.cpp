@@ -3,24 +3,19 @@
 
 void AssetManagerRaw::Initialize(std::string src)
 {
-	m_Src = src;
-
-	ReloadAssets();
-}
-
-void AssetManagerRaw::ReloadAssets()
-{
-	m_Resources.clear();
-
-	for (auto entry : std::filesystem::recursive_directory_iterator())
-	{
-		if (!std::filesystem::is_directory(entry.path())) {
-			m_Resources.push_back(entry.path().string().substr(m_Src.size()));
-		}
-	}
+	m_Src = src + "\\assets\\";
 }
 
 std::string AssetManagerRaw::GetAsset(std::string assetName)
 {
-    return std::string();
+	if (std::filesystem::exists(m_Src + assetName) && !std::filesystem::is_directory(m_Src + assetName)) {
+		std::ifstream file(m_Src + assetName, std::ios::binary);
+		std::stringstream stream;
+		stream << file.rdbuf();
+		file.close();
+
+		return stream.str();
+	}
+
+	return "";
 }

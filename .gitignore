@@ -4,8 +4,6 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
-x86/
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
@@ -14,7 +12,9 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+CMake/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
+CMakeLists.txt

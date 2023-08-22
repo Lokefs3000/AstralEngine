@@ -4,45 +4,45 @@
 #include "graphics/d11/resources/D11Texture2D.h"
 #include "graphics/d11/D11GraphicsContext.h"
 
+#include "resources/AssetManager.h"
+
+#include "threading/ThreadPool.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-void D11TextureManager::LoadTexture()
+void D11TextureManager::LoadTexture(std::shared_ptr<D11Texture2D> tex, TextureRef ref, std::string src, std::string meta)
 {
-    while (!m_killThread)
-    {
-        for (auto pair : m_TextureList) {
-            if (!pair.second->IsInitialized()) {
-                Texture2DOptions options{};
-
-                //TODO: get astral file from code
-
-                std::string dataBuffer = "";//CODE
-
-                int w, h, ch;
-                options.Pixels = stbi_load_from_memory((uchar*)dataBuffer.c_str(), dataBuffer.size(), &w, &h, &ch, 4);
-
-                options.Width = w;
-                options.Height = h;
-                options.Channels = ch;
-
-                pair.second->Initialize(options);
-
-                m_remainingTextures--; //TODO: maybe mutex because of modification stuff
-            }
-
-            if (m_remainingTextures <= 0)
-                break;
-        }
-
-        if (m_isThreaded) {
-            std::unique_lock<std::mutex> lock(m_textureListMutex);
-            while (m_remainingTextures <= 0) m_textureListCondition.wait(lock);
-        }
-        else {
-            break;
-        }
+    if (tex->IsInitialized()) {
+        return; //TODO: *sigh*
     }
+    if (src.empty()) {
+        return; //TODO: ERRORS!!
+    }
+
+    Texture2DOptions options{};
+    options.Context = m_Context;
+
+    if (!meta.empty()) {
+        auto config = Configurations::LoadConfig(meta);
+
+        auto tconfig = config->GetChild("Texture");
+        options.Filtering = tconfig->GetValue<int>("Filtering");
+        options.Repeating = tconfig->GetValue<int>("Repeating");
+    }
+
+    int w, h, ch;
+    options.Pixels = stbi_load_from_memory((uchar*)src.c_str(), src.size(), &w, &h, &ch, 4);
+
+    if (options.Pixels == NULL) {
+        return; //TODO: ERORORRORORORSS!
+    }
+
+    options.Width = w;
+    options.Height = h;
+    options.Channels = ch;
+
+    tex->Initialize(options);
 }
 
 void D11TextureManager::ReadjustReferences()
@@ -56,26 +56,20 @@ void D11TextureManager::ReadjustReferences()
     }
 }
 
-void D11TextureManager::Initialize(std::shared_ptr<IGraphicsContext> Context, bool IsThreaded)
+void D11TextureManager::Initialize(std::shared_ptr<IGraphicsContext> Context, std::shared_ptr<IAssetManager> Assets, bool IsThreaded)
 {
     m_Context = (D11GraphicsContext*)Context.get();
     m_isThreaded = IsThreaded;
+    m_assetManager = Assets;
 
-    if (m_isThreaded) {
-        m_loadingThread = std::thread(D11TextureManager::LoadTexture, this);
-        m_loadingThread.detach();
-    }
+    m_TextureReference = std::vector<std::pair<std::string, TextureRef>>();
+    m_TextureList = std::vector<std::pair<TextureRef, std::shared_ptr<D11Texture2D>>>();
 }
 
 void D11TextureManager::Shutdown()
 {
     Clear();
     m_Context = NULL;
-
-    if (m_isThreaded) {
-        m_killThread = true;
-        m_loadingThread.join();
-    }
 }
 
 TextureRef D11TextureManager::GetTexture(std::string path)
@@ -94,14 +88,17 @@ TextureRef D11TextureManager::GetTexture(std::string path)
     m_TextureList.push_back(std::make_pair(ref, texture));
     m_TextureReference.push_back(std::make_pair(path, ref));
 
-    m_remainingTextures++;
+    std::string src = m_assetManager->GetAsset(path);
+    std::string meta = m_assetManager->GetAsset(path + ".astral");
 
     if (m_isThreaded) {
-        m_textureListCondition.notify_all();
+        m_resourcePool->QueueJob(std::bind(&D11TextureManager::LoadTexture, this, texture, ref, src, meta));
     }
     else {
-        LoadTexture();
+        LoadTexture(texture, ref, src, meta);
     }
+
+    return ref;
 }
 
 std::shared_ptr<ITexture2D> D11TextureManager::GetTextureFromRef(TextureRef ref)

@@ -171,6 +171,8 @@
   <ItemGroup>
     <ClInclude Include="core\Engine.h" />
     <ClInclude Include="core\EngineLayer.h" />
+    <ClInclude Include="debugging\Stopwatch.h" />
+    <ClInclude Include="debugging\StopWatchHigh.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="graphics\d11\D11GraphicsContext.h" />
     <ClInclude Include="graphics\d11\D11Renderer.h" />
@@ -184,6 +186,7 @@
     <ClInclude Include="graphics\Window.h" />
     <ClInclude Include="loader\Configurations.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="resources\AssetManager.h" />
     <ClInclude Include="resources\AssetManagerRaw.h" />
     <ClInclude Include="threading\ThreadPool.h" />
     <ClInclude Include="utils\ApiUtils.h" />

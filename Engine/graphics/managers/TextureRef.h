@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Variables.h"
+
 #include <cstdint>
 #include <memory>
 
-struct TextureRef_Struct
+struct EXPORT TextureRef_Struct
 {
 private:
 	uint64_t m_RefId = 0;

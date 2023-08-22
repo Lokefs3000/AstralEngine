@@ -2,6 +2,7 @@
 #define EXPOSE_CONTEXT
 #define EXPOSE_RENDERER
 #define LAYER_EVENTS
+#define EXPOSE_TEXTURE2D
 
 #include <core/Engine.h>
 #include <core/EngineLayer.h>
@@ -9,6 +10,11 @@
 #include <graphics/d11/D11GraphicsContext.h>
 #include <graphics/d11/D11Renderer.h>
 #include <graphics/Window.h>
+#include <graphics/d11/managers/D11TextureManager.h>
+#include <graphics/d11/resources/D11Texture2D.h>
+
+#include <resources/AssetManager.h>
+#include <resources/AssetManagerRaw.h>
 
 #define WIN32 //IDK
 #ifdef WIN32
@@ -24,6 +30,7 @@
 #include "ImGui/imgui_impl_sdl3.h"
 
 #include "ContentBrowser.h"
+#include "PerformanceViewer.h"
 
 #include <fstream>
 #include <sstream>
@@ -37,6 +44,10 @@ private:
     std::shared_ptr<ConfigObject> m_InterfaceConfig;
 
     std::shared_ptr<ContentBrowser> m_ContentBrowser;
+    std::shared_ptr<PerformanceViewer> m_PerformanceViewer;
+
+    std::shared_ptr<IAssetManager> m_AssetManager;
+    std::shared_ptr<ITextureManager> m_TextureManager;
 public:
     using EngineLayer::EngineLayer;
 
@@ -109,6 +120,13 @@ void EditorLayer::OnInitialize()
     m_InterfaceConfig = Configurations::LoadConfig(isrc.str());
 
     m_ContentBrowser = std::make_shared<ContentBrowser>();
+    m_PerformanceViewer = std::make_shared<PerformanceViewer>();
+
+    m_AssetManager = std::make_shared<AssetManagerRaw>();
+    m_AssetManager->Initialize(m_ProjectFolder);
+
+    m_TextureManager = std::make_shared<D11TextureManager>();
+    m_TextureManager->Initialize(GetEngine()->GetContext(), m_AssetManager, false);
 }
 
 void EditorLayer::OnFrame()
@@ -117,7 +135,8 @@ void EditorLayer::OnFrame()
     ImGui_ImplDX11_NewFrame();
     ImGui::NewFrame();
 
-    m_ContentBrowser->Render(m_ProjectFolder + "\\assets\\");
+    m_ContentBrowser->Render(m_TextureManager, m_ProjectFolder + "\\assets\\");
+    m_PerformanceViewer->Render(GetEngine());
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

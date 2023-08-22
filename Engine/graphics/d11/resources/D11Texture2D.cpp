@@ -4,9 +4,9 @@
 #include "graphics/d11/D11GraphicsContext.h"
 #include "utils/D11Utils.h"
 
-void D11Texture2D::Initialize(Texture2DOptions& options)
+void D11Texture2D::Initialize(Texture2DOptions options)
 {
-	D11GraphicsContext* ctx = (D11GraphicsContext*)options.Context.get();
+	D11GraphicsContext* ctx = (D11GraphicsContext*)options.Context;
 
 	D3D11_TEXTURE2D_DESC texDesc{};
 	texDesc.Width = options.Width;
@@ -21,6 +21,7 @@ void D11Texture2D::Initialize(Texture2DOptions& options)
 
 	D3D11_SUBRESOURCE_DATA texData{};
 	texData.pSysMem = options.Pixels;
+	texData.SysMemPitch = 4 * sizeof(uchar) * options.Width;
 
 	D11PerformCheck(ctx->GetDevice()->CreateTexture2D(&texDesc, &texData, m_Texture.GetAddressOf()), false, "Failed to create Texture2D");
 
@@ -29,11 +30,11 @@ void D11Texture2D::Initialize(Texture2DOptions& options)
 	switch (options.Filtering)
 	{
 	case 0:
-		samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 		break;
 	case 1:
 	default:
-		samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 		break;
 	}
 
@@ -42,11 +43,13 @@ void D11Texture2D::Initialize(Texture2DOptions& options)
 	case 0:
 		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 		break;
 	case 1:
 	default:
 		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 		break;
 	}
 
@@ -57,7 +60,7 @@ void D11Texture2D::Initialize(Texture2DOptions& options)
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC resViewDesc{};
 	resViewDesc.Format = texDesc.Format;
-	resViewDesc.ViewDimension = D3D10_1_SRV_DIMENSION_TEXTURE2D;
+	resViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	resViewDesc.Texture2D.MipLevels = 1;
 
 	D11PerformCheck(ctx->GetDevice()->CreateShaderResourceView(m_Texture.Get(), &resViewDesc, m_ResourceView.GetAddressOf()), false, "Failed to create SamplerState");
