@@ -2,6 +2,9 @@
 
 void ContentBrowser::SearchTree(std::shared_ptr<CB_FileTreeElement> Parent, std::string Path, uint32_t& Id)
 {
+	if (!std::filesystem::exists(Path))
+		return;
+
 	for (auto entry : std::filesystem::directory_iterator(Path))
 	{
 		if (!std::filesystem::exists(entry.path()))
@@ -130,7 +133,9 @@ void ContentBrowser::Render(std::shared_ptr<ITextureManager> tm, std::string ass
 			ImDrawList* drawList = g.CurrentWindow->DrawList;
 
 			bool isGrid = m_ItemSize > 30;
-			int maxCharacters = (int)roundf(m_ItemSize / style.FramePadding.x * 2.0f - g.FontSize / 2.0f) / 2.0f - 2;
+			int maxCharacters = std::string::npos;
+			if (isGrid)
+				maxCharacters = (int)roundf(m_ItemSize / style.FramePadding.x * 2.0f - g.FontSize / 2.0f) / 2.0f - 2;
 
 			uint32_t entryNum = 0;
 
@@ -146,16 +151,22 @@ void ContentBrowser::Render(std::shared_ptr<ITextureManager> tm, std::string ass
 					extension = "Folder";
 				}
 				else {
-					uint32_t find_extension = name.find_last_of(".");
-					if (find_extension != std::string::npos) {
-						extension = name.substr(find_extension);
-						name = name.substr(0, find_extension);
+					uint32_t find_extension = entry.path().string().find_last_of(".");
+					if (find_extension != std::string::npos && find_extension <= entry.path().string().size()) {
+						try
+						{
+							extension = entry.path().string().substr(find_extension + 1);
+						}
+						catch (const std::exception& ex)
+						{
+							std::cout << ex.what() << std::endl;
+						}
 					}
 				}
 
 				TextureRef texture = NULL;
 
-				if (extension == ".png" || extension == ".jpg" || extension == ".jpeg") {
+				if (extension == "png" || extension == "jpg" || extension == "jpeg") {
 					if (m_Textures.count(entry.path().string()))
 						texture = m_Textures[entry.path().string()];
 					else {

@@ -188,6 +188,11 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="resources\AssetManager.h" />
     <ClInclude Include="resources\AssetManagerRaw.h" />
+    <ClInclude Include="scenes\components\Component.h" />
+    <ClInclude Include="scenes\components\ComponentContainer.h" />
+    <ClInclude Include="scenes\components\Transform.h" />
+    <ClInclude Include="scenes\Scene.h" />
+    <ClInclude Include="scenes\SceneManager.h" />
     <ClInclude Include="threading\ThreadPool.h" />
     <ClInclude Include="utils\ApiUtils.h" />
     <ClInclude Include="utils\D11Utils.h" />
@@ -211,6 +216,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="resources\AssetManagerRaw.cpp" />
+    <ClCompile Include="scenes\SceneManager.cpp" />
     <ClCompile Include="threading\ThreadPool.cpp" />
     <ClCompile Include="utils\ApiUtils.cpp" />
     <ClCompile Include="utils\StringUtils.cpp" />

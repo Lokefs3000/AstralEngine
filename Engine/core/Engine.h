@@ -13,6 +13,7 @@
 #include "debugging/Stopwatch.h"
 
 class Window;
+class SceneManager;
 __interface IGraphicsContext;
 __interface IRenderer;
 __interface IAssetManager;
@@ -31,6 +32,8 @@ private:
 	std::shared_ptr<IAssetManager> m_AssetManager;
 
 	std::shared_ptr<ITextureManager> m_TextureManager;
+
+	std::shared_ptr<SceneManager> m_SceneManager;
 
 	std::string m_ProjectFolder = "";
 public:
@@ -62,6 +65,7 @@ public:
 	std::shared_ptr<IRenderer> GetRenderer() { return m_Renderer; }
 	std::shared_ptr<IAssetManager> GetAssetManager() { return m_AssetManager; }
 	std::shared_ptr<ITextureManager> GetTextureManager() { return m_TextureManager; }
+	std::shared_ptr<SceneManager> GetSceneManager() { return m_SceneManager; }
 
 	void Initialize();
 	void Run();

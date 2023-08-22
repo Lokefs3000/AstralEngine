@@ -11,6 +11,8 @@
 #include "graphics/managers/TextureManager.h"
 #include "graphics/d11/managers/D11TextureManager.h"
 
+#include "scenes/SceneManager.h"
+
 #ifdef WINDOWS
 #include "graphics/d11/D11GraphicsContext.h"
 #include "graphics/d11/D11Renderer.h"
@@ -67,6 +69,8 @@ void Engine::Initialize()
 	m_GraphicsContext->InitializeContext(m_MainWindow);
 	m_TextureManager->Initialize(m_GraphicsContext, m_AssetManager, ProjectConfig->GetChild("ProjectConfig")->GetChild("TextureManager")->GetValue<bool>("ThreadingEnabled"));
 	m_Renderer->InitializeRenderer(m_MainWindow, m_GraphicsContext);
+
+	m_SceneManager = std::make_shared<SceneManager>();
 
 	for (size_t i = 0; i < EngineLayers.size(); i++)
 	{

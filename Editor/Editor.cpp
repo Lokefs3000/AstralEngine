@@ -31,6 +31,8 @@
 
 #include "ContentBrowser.h"
 #include "PerformanceViewer.h"
+#include "TitleBar.h"
+#include "Explorer.h"
 
 #include <fstream>
 #include <sstream>
@@ -45,6 +47,8 @@ private:
 
     std::shared_ptr<ContentBrowser> m_ContentBrowser;
     std::shared_ptr<PerformanceViewer> m_PerformanceViewer;
+    std::shared_ptr<TitleBar> m_TitleBar;
+    std::shared_ptr<Explorer> m_Explorer;
 
     std::shared_ptr<IAssetManager> m_AssetManager;
     std::shared_ptr<ITextureManager> m_TextureManager;
@@ -109,6 +113,9 @@ void EditorLayer::OnInitialize()
     ImGui_ImplSDL3_InitForD3D(window->GetInternalWindow());
     ImGui_ImplDX11_Init(context->GetDevice(), context->GetDeferred());
 
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
     if (m_LoadedConfig.get() != NULL)
         window->SetTitle(StringUtils::KeywordFormat("AstralEditor | Loaded project: " + m_LoadedConfig->GetChild("ProjectConfig")->GetValue<std::string>("DisplayName") + " | Engine: v{%eVer}"));
 
@@ -121,6 +128,8 @@ void EditorLayer::OnInitialize()
 
     m_ContentBrowser = std::make_shared<ContentBrowser>();
     m_PerformanceViewer = std::make_shared<PerformanceViewer>();
+    m_TitleBar = std::make_shared<TitleBar>();
+    m_Explorer = std::make_shared<Explorer>();
 
     m_AssetManager = std::make_shared<AssetManagerRaw>();
     m_AssetManager->Initialize(m_ProjectFolder);
@@ -135,8 +144,12 @@ void EditorLayer::OnFrame()
     ImGui_ImplDX11_NewFrame();
     ImGui::NewFrame();
 
+    ImGui::DockSpaceOverViewport(NULL, ImGuiDockNodeFlags_PassthruCentralNode);
+
     m_ContentBrowser->Render(m_TextureManager, m_ProjectFolder + "\\assets\\");
     m_PerformanceViewer->Render(GetEngine());
+    m_TitleBar->Render(GetEngine()->Watches.DeltaWatch);
+    m_Explorer->Render(GetEngine()->GetSceneManager());
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

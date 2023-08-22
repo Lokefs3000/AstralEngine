@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="ContentBrowser.cpp" />
     <ClCompile Include="Editor.cpp" />
+    <ClCompile Include="Explorer.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
@@ -168,9 +169,11 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Library.cpp" />
     <ClCompile Include="PerformanceViewer.cpp" />
+    <ClCompile Include="TitleBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContentBrowser.h" />
+    <ClInclude Include="Explorer.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
     <ClInclude Include="ImGui\imgui_impl_dx11.h" />
@@ -184,6 +187,7 @@
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="Library.h" />
     <ClInclude Include="PerformanceViewer.h" />
+    <ClInclude Include="TitleBar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -51,3 +51,6 @@
 #define VERSION_GET_PATCH(version) combined & 0x3ff
 
 typedef unsigned char uchar;
+
+typedef unsigned long long Entity;
+typedef Entity GameObject;
