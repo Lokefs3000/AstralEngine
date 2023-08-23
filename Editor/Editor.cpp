@@ -148,7 +148,7 @@ void EditorLayer::OnFrame()
 
     m_ContentBrowser->Render(m_TextureManager, m_ProjectFolder + "\\assets\\");
     m_PerformanceViewer->Render(GetEngine());
-    m_TitleBar->Render(GetEngine()->Watches.DeltaWatch);
+    m_TitleBar->Render(GetEngine()->Watches.DeltaWatch, GetEngine()->GetSceneManager());
     m_Explorer->Render(GetEngine()->GetSceneManager());
 
     ImGui::Render();

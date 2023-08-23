@@ -14,4 +14,6 @@ void SceneManager::UnloadScene(std::string path)
 
 void SceneManager::LoadGlobalScene(std::string path)
 {
+	m_Scenes.clear();
+	m_Scenes.push_back(std::make_shared<Scene>());
 }

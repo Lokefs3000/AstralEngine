@@ -10,6 +10,8 @@ private:
 	std::vector<Entity> m_GameEntities;
 	std::vector<ComponentContainer> m_Components;
 public:
+	std::string Name = "";
+
 	std::vector<Entity>& GetEntities() { return m_GameEntities; }
 	std::vector<ComponentContainer>& GetComponents() { return m_Components; }
 };

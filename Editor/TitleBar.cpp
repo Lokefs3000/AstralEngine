@@ -1,5 +1,7 @@
 #include "TitleBar.h"
 
+#include "scenes/SceneManager.h"
+
 void TitleBar::DisplayTooltip(std::string content)
 {
 	if (ImGui::BeginItemTooltip()) {
@@ -8,7 +10,7 @@ void TitleBar::DisplayTooltip(std::string content)
 	}
 }
 
-void TitleBar::Render(StopWatch deltaWatch)
+void TitleBar::Render(StopWatch deltaWatch, std::shared_ptr<SceneManager> sm)
 {
 	float dt = deltaWatch->GetDuration() / 1000.0f;
 	uint32_t fps = (uint32_t)roundf(1.0f / dt);
@@ -20,10 +22,10 @@ void TitleBar::Render(StopWatch deltaWatch)
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::BeginMenu("New")) {
 				if (ImGui::MenuItem("New standalone")) {
-
+					sm->LoadGlobalScene("");
 				}
 				if (ImGui::MenuItem("New parallel")) {
-
+					sm->LoadScene("");
 				}
 
 				ImGui::EndMenu();

@@ -1,0 +1,11 @@
+Sheet: {
+    Rows: 9
+    Columns: 7
+    Frames: 60
+    Width: 57
+    Height: 69
+}
+Texture: {
+    Filtering: 1
+    Repeating: 0
+}
