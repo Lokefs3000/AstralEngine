@@ -1,34 +1,11 @@
-﻿  Editor.cpp
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(27,26): warning C4251: 'Engine::m_MainWindow': class 'std::shared_ptr<Window>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(27,7): message : see declaration of 'std::shared_ptr<Window>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(29,36): warning C4251: 'Engine::m_GraphicsContext': class 'std::shared_ptr<IGraphicsContext>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(29,7): message : see declaration of 'std::shared_ptr<IGraphicsContext>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(30,29): warning C4251: 'Engine::m_Renderer': class 'std::shared_ptr<IRenderer>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(30,7): message : see declaration of 'std::shared_ptr<IRenderer>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(32,33): warning C4251: 'Engine::m_AssetManager': class 'std::shared_ptr<IAssetManager>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(32,7): message : see declaration of 'std::shared_ptr<IAssetManager>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(34,35): warning C4251: 'Engine::m_TextureManager': class 'std::shared_ptr<ITextureManager>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(34,7): message : see declaration of 'std::shared_ptr<ITextureManager>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(36,32): warning C4251: 'Engine::m_SceneManager': class 'std::shared_ptr<SceneManager>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(36,7): message : see declaration of 'std::shared_ptr<SceneManager>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(38,14): warning C4251: 'Engine::m_ProjectFolder': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(5119,29): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(55,44): warning C4251: 'Engine::EngineLayers': class 'std::vector<std::shared_ptr<EngineLayer>,std::allocator<std::shared_ptr<EngineLayer>>>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(55,7): message : see declaration of 'std::vector<std::shared_ptr<EngineLayer>,std::allocator<std::shared_ptr<EngineLayer>>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\core\Engine.h(56,32): warning C4251: 'Engine::ProjectConfig': class 'std::shared_ptr<ConfigObject>' needs to have dll-interface to be used by clients of class 'Engine'
-C:\Users\Loke\source\repos\AstralEngine\Engine\loader\Configurations.h(18,19): message : see declaration of 'std::shared_ptr<ConfigObject>'
-C:\Users\Loke\source\repos\AstralEngine\Editor\Editor.cpp(179,61): warning C4390: ';': empty controlled statement found; is this the intent?
-  Explorer.cpp
+﻿  Explorer.cpp
 C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\SceneManager.h(13,38): warning C4251: 'SceneManager::m_Scenes': class 'std::vector<std::shared_ptr<Scene>,std::allocator<std::shared_ptr<Scene>>>' needs to have dll-interface to be used by clients of class 'SceneManager'
 C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\SceneManager.h(13,7): message : see declaration of 'std::vector<std::shared_ptr<Scene>,std::allocator<std::shared_ptr<Scene>>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(10,22): warning C4251: 'Scene::m_GameEntities': class 'std::vector<Entity,std::allocator<Entity>>' needs to have dll-interface to be used by clients of class 'Scene'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(10,7): message : see declaration of 'std::vector<Entity,std::allocator<Entity>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(11,34): warning C4251: 'Scene::m_Components': class 'std::vector<ComponentContainer,std::allocator<ComponentContainer>>' needs to have dll-interface to be used by clients of class 'Scene'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(11,7): message : see declaration of 'std::vector<ComponentContainer,std::allocator<ComponentContainer>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(13,14): warning C4251: 'Scene::Name': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Scene'
+C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(12,22): warning C4251: 'Scene::m_GameEntities': class 'std::vector<Entity,std::allocator<Entity>>' needs to have dll-interface to be used by clients of class 'Scene'
+C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(12,7): message : see declaration of 'std::vector<Entity,std::allocator<Entity>>'
+C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(13,49): warning C4251: 'Scene::m_Components': class 'std::vector<std::shared_ptr<EntityComponents>,std::allocator<std::shared_ptr<EntityComponents>>>' needs to have dll-interface to be used by clients of class 'Scene'
+C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(13,7): message : see declaration of 'std::vector<std::shared_ptr<EntityComponents>,std::allocator<std::shared_ptr<EntityComponents>>>'
+C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(17,14): warning C4251: 'Scene::Name': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Scene'
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(5119,29): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
-  TitleBar.cpp
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\SceneManager.h(13,38): warning C4251: 'SceneManager::m_Scenes': class 'std::vector<std::shared_ptr<Scene>,std::allocator<std::shared_ptr<Scene>>>' needs to have dll-interface to be used by clients of class 'SceneManager'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\SceneManager.h(13,7): message : see declaration of 'std::vector<std::shared_ptr<Scene>,std::allocator<std::shared_ptr<Scene>>>'
-  Generating Code...
+C:\Users\Loke\source\repos\AstralEngine\Editor\Explorer.cpp(47,35): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
   Editor.vcxproj -> C:\Users\Loke\source\repos\AstralEngine\x64\Debug\Editor.exe
