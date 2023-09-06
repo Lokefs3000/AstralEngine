@@ -1,237 +1,258 @@
 #include "ContentBrowser.h"
 
-void ContentBrowser::SearchTree(std::shared_ptr<CB_FileTreeElement> Parent, std::string Path, uint32_t& Id)
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
+
+#include <Graphics/GL/Managers/GLTextureManager.h>
+#include <Graphics/GL/Resources/GLTexture2D.h>
+
+#include <Basics/AssetManager.h>
+
+#include <Data/TextureManagerData.h>
+
+#include <filesystem>
+#include <iostream>
+
+void ContentBrowser::SearchFileStructure(std::shared_ptr<CB_FileElement> Element, uint32_t& Id)
 {
-	if (!std::filesystem::exists(Path))
-		return;
-
-	for (auto entry : std::filesystem::directory_iterator(Path))
+	Id++;
+	for (auto files : std::filesystem::directory_iterator(Element->Path))
 	{
-		if (!std::filesystem::exists(entry.path()))
-			continue;
+		std::shared_ptr<CB_FileElement> File = std::make_shared<CB_FileElement>();
+		File->Path = files.path().string();
+		File->Name = File->Path.substr(File->Path.find_last_of("\\")+1);
+		File->Extension = files.path().has_extension() ? files.path().extension().string().substr(1) : "";
+		File->Id = Id;
 
-		std::shared_ptr<CB_FileTreeElement> element = std::make_shared<CB_FileTreeElement>();
-		element->HasParent = true;
-		element->Id = Id;
-		element->Name = entry.path().string().substr(entry.path().string().find_last_of("\\") + 1);
-
-		if (std::filesystem::is_directory(entry.path()))
-			SearchTree(element, entry.path().string(), Id);
-
-		m_FileTreeElements.push_back(element);
-		Parent->Children.push_back(element);
-
-		Id++;
+		Element->Elements.push_back(File);
+		
+		if (std::filesystem::is_directory(File->Path)) {
+			File->IsDirectory = true;
+			m_DirElementMap.insert(std::make_pair(File->Path + "\\", File));
+			SearchFileStructure(File, Id);
+		}
 	}
 }
 
-bool ContentBrowser::SearchTreeElements(std::shared_ptr<CB_FileTreeElement> Parent)
+void ContentBrowser::ShowFileTreeNodes(std::shared_ptr<CB_FileElement> Element)
 {
-	bool open = CustomNode((Parent->Name + "##" + std::to_string(Parent->Id)).c_str(), Parent->Children.size() == 0 ? ImGuiTreeNodeFlags_Bullet : 0);
-	if (open) {
-		for (size_t i = 0; i < Parent->Children.size(); i++)
-			SearchTreeElements(Parent->Children[i]);
+	GLTexture2D* opened = (GLTexture2D*)m_Textures->FromRef(m_Tex_FolderOpened).get();
+	GLTexture2D* closed = (GLTexture2D*)m_Textures->FromRef(m_Tex_FolderClosed).get();
+
+	if (Element.get() != NULL) {
+		if (Element->Extension == "png" || Element->Extension == "jpg" || Element->Extension == "jpeg") {
+			opened = (GLTexture2D*)m_TextureManager->FromRef(m_TextureManager->GetTexture2D(Element->Path.substr(m_ProjectAssetFolder.size()))).get();
+			closed = opened;
+		}
+		else if (Element->IsDirectory) {
+			opened = (GLTexture2D*)m_Textures->FromRef(m_Tex_FolderOpened).get();
+			closed = (GLTexture2D*)m_Textures->FromRef(m_Tex_FolderClosed).get();
+		}
+	}
+
+	if (ShowFileTreeNode(Element, opened, closed)) {
+		for (size_t i = 0; i < Element->Elements.size(); i++)
+			ShowFileTreeNodes(Element->Elements[i]);
+
 		ImGui::TreePop();
 	}
-	return open;
 }
 
-bool ContentBrowser::CustomNode(const char* label, ImGuiTreeNodeFlags flags) {
+bool ContentBrowser::ShowFileTreeNode(std::shared_ptr<CB_FileElement> Element, GLTexture2D* t_opened, GLTexture2D* t_closed)
+{
+	if (Element.get() == NULL) {
+		ImGui::TextColored(ImVec4(1, 0, 0, 1), "CB_FileElement tree pointer is null!");
+		return false;
+	}
+
 	ImGuiContext& g = *GImGui;
 	ImGuiWindow* window = g.CurrentWindow;
 
-	bool isSmall = (flags & ImGuiTreeNodeFlags_Bullet) != ImGuiTreeNodeFlags_Bullet;
+	std::string nameId = Element->Name + "##CB_FT_" + std::to_string(Element->Id);
+	const char* nameIdc = nameId.c_str();
 
-	ImU32 id = window->GetID(label);
+	std::string nameId2 = Element->Name + "##CB_FT_BP_" + std::to_string(Element->Id);
+	const char* nameIdc2 = nameId2.c_str();
+
+	ImU32 id = window->GetID(nameIdc);
+	ImU32 id2 = window->GetID(nameIdc2);
 	ImVec2 pos = window->DC.CursorPos;
-	ImRect bbFull(pos, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
-	ImRect bbUse(pos, ImVec2(pos.x + g.FontSize + g.Style.FramePadding.y * 2, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
-	ImRect bb;
-	if (!isSmall)
-		bb = ImRect(bbUse.Min, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
-	else
-		bb = ImRect(bbUse.Max, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
+	float button_sz = g.FontSize + g.Style.FramePadding.y * 2;
+	ImRect bb(pos, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
+	ImRect bb2(pos, ImVec2(pos.x + g.FontSize + g.Style.FramePadding.y * 2, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
+	ImRect bb3(ImVec2(bb2.Max.x + g.Style.FramePadding.x, pos.y), ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
 	bool opened = ImGui::TreeNodeBehaviorIsOpen(id);
 	bool hovered, held;
-	if (isSmall) {
-		if (ImGui::ButtonBehavior(bbUse, id, &hovered, &held, true))
-			window->DC.StateStorage->SetInt(id, opened ? 0 : 1);
-		if (hovered || held)
-			window->DrawList->AddRectFilled(bbUse.Min, bbUse.Max, ImGui::ColorConvertFloat4ToU32(ImGui::GetStyleColorVec4(held ? ImGuiCol_HeaderActive : ImGuiCol_HeaderHovered)));
+	bool hovered2, held2;
+	if (ImGui::ButtonBehavior(bb2, id, &hovered, &held, true))
+		window->DC.StateStorage->SetInt(id, opened ? 0 : 1);
+	if (ImGui::ButtonBehavior(bb3, id2, &hovered2, &held2, true)) {
+		if (Element->IsDirectory) {
+			m_CurrentFolder = Element->Path.substr(m_ProjectAssetFolder.size()) + "\\";
+		}
 	}
+	if ((hovered || held) && Element->IsDirectory)
+		window->DrawList->AddRectFilled(bb2.Min, bb2.Max, ImGui::ColorConvertFloat4ToU32(g.Style.Colors[held ? ImGuiCol_HeaderActive : ImGuiCol_HeaderHovered]));
+	if (hovered2 || held2)
+		window->DrawList->AddRectFilled(bb3.Min, bb3.Max, ImGui::ColorConvertFloat4ToU32(g.Style.Colors[held ? ImGuiCol_HeaderActive : ImGuiCol_HeaderHovered]));
 
 	// Icon, text
-	float button_sz = g.FontSize + g.Style.FramePadding.y * 2;
-	if (!isSmall) {
-		window->DrawList->AddRectFilled(pos, ImVec2(pos.x + button_sz, pos.y + button_sz), ImColor(255, 255, 255));
-		ImGui::RenderText(ImVec2(pos.x + button_sz + g.Style.ItemInnerSpacing.x, pos.y + g.Style.FramePadding.y), label);
-	}
-	else {
-		ImGui::RenderArrow(window->DrawList, bbUse.Min + ImVec2(3.0f, 4.0f), 0xffffffff, opened ? ImGuiDir_Down : ImGuiDir_Up);
-		ImGui::RenderText(ImVec2(pos.x + button_sz + g.Style.ItemInnerSpacing.x, pos.y + g.Style.FramePadding.y), label);
-	}
+	ImVec2 pos2 = pos + ImVec2(button_sz + g.Style.FramePadding.x, 0.0f);
+	window->DrawList->AddImage((ImTextureID)(opened ? t_opened->GetTextureId() : t_closed->GetTextureId()), pos2, ImVec2(pos2.x + button_sz, pos2.y + button_sz));
+	ImGui::RenderText(ImVec2(pos2.x + button_sz + g.Style.ItemInnerSpacing.x, pos2.y + g.Style.FramePadding.y), Element->Name.c_str());
 
-	ImGui::ItemSize(bbFull, g.Style.FramePadding.y);
-	ImGui::ItemAdd(bbFull, id);
+	if (Element->IsDirectory)
+		ImGui::RenderArrow(window->DrawList, pos + ImVec2(2.5f, 2.5f), 0xffffffff, opened ? ImGuiDir_Down : ImGuiDir_Right);
+
+	ImGui::ItemSize(bb, g.Style.FramePadding.y);
+	ImGui::ItemAdd(bb2, id);
+	ImGui::ItemAdd(bb3, id2);
 
 	if (opened)
-		ImGui::TreePush(label);
+		ImGui::TreePush(Element->Name.c_str());
 	return opened;
 }
 
-void ContentBrowser::Render(std::shared_ptr<ITextureManager> tm, std::string assets)
+ContentBrowser::ContentBrowser(std::string assets, std::shared_ptr<IAssetManager> assetManager, std::shared_ptr<ITextureManager> textures)
 {
+	m_ProjectAssetFolder = assets;
+
+	m_TextureManager = std::make_unique<GLTextureManager>();
+	m_TextureManager->Initialize(assetManager);
+
+	m_Textures = textures;
+
+	m_Tex_FolderClosed = m_Textures->GetTexture2D("textures\\folder_closed.png");
+	m_Tex_FolderOpened = m_Textures->GetTexture2D("textures\\folder_opened.png");
+	m_Tex_Model = m_Textures->GetTexture2D("textures\\model.png");
+	m_Tex_PlainFile = m_Textures->GetTexture2D("textures\\file_plain.png");
+}
+
+void ContentBrowser::Render(float dt)
+{
+	m_SearchTime -= dt;
+	if (m_SearchTime < 0.0f) {
+		m_SearchTime = 3.0f;
+
+		m_DirElementMap.clear();
+
+		m_Root = std::make_shared<CB_FileElement>();
+		m_Root->Path = m_ProjectAssetFolder;
+		m_Root->Name = "Assets";
+		m_Root->Id = 0;
+		m_Root->IsDirectory = true;
+
+		uint32_t id = 0;
+		SearchFileStructure(m_Root, id);
+	}
+
 	if (ImGui::Begin("Content browser")) {
-		float W = ImGui::GetContentRegionAvail().x;
-		float WTree = W / 5.0f;
-		float H = ImGui::GetContentRegionAvail().y;
+		ImVec2 availSize = ImGui::GetContentRegionAvail();
+		float sideWidth = availSize.x / 5.0f;
 
-		if (ImGui::BeginChild("##CB_FileTree", ImVec2(WTree, H), true)) {
-			if (m_ReProcess <= 0.01f) {
-				try
-				{
-					m_FileTreeElements.clear();
+		ImGuiContext& ctx = *ImGui::GetCurrentContext();
+		ImGuiStyle& style = ctx.Style;
 
-					std::shared_ptr<CB_FileTreeElement> Root = std::make_shared<CB_FileTreeElement>();
-					Root->Name = "Assets";
-					Root->Id = 0;
-
-					m_FileTreeElements.push_back(Root);
-
-					uint32_t Id = 1;
-					SearchTree(Root, assets, Id);
-				}
-				catch (const std::exception& ex)
-				{
-					std::cout << ex.what() << std::endl;
-					m_ReProcess = 0.01f;
-				}
-			}
-
-			SearchTreeElements(m_FileTreeElements[0]);
+		if (ImGui::BeginChild("##CB_FileTree", ImVec2(sideWidth, availSize.y), true)) {
+			ShowFileTreeNodes(m_Root);
 		}
 		ImGui::EndChild();
 
 		ImGui::SameLine();
 
-		ImGuiStyle style = ImGui::GetStyle();
+		if (ImGui::BeginChild("##CB_FileView", ImVec2(availSize.x - sideWidth - style.WindowPadding.x, availSize.y), true)) {
+			std::string currentFolder = m_ProjectAssetFolder + m_CurrentFolder;
 
-		float PaddingW = style.WindowPadding.x;
-		float ViewW = W - WTree - PaddingW; //Minus padding or it will get cutoff!
-		if (ImGui::BeginChild("##CB_FileOverview", ImVec2(ViewW, H), true, ImGuiWindowFlags_MenuBar)) {
-			float AvailableSpaceW = ImGui::GetContentRegionAvail().x;
+			if (!std::filesystem::exists(currentFolder) || !std::filesystem::is_directory(currentFolder))
+				m_CurrentFolder = "";
 
-			if (m_ItemSize > AvailableSpaceW / 3.0f)
-				m_ItemSize = AvailableSpaceW / 3.0f;
+			std::shared_ptr<CB_FileElement> Element = m_DirElementMap.count(currentFolder) ? m_DirElementMap.at(currentFolder) : m_Root;
+			
+			if (Element.get() != NULL) {
+				ImVec2 availSize = ImGui::GetContentRegionAvail();
+				float localXStart = ImGui::GetCursorPosX();
 
-			if (ImGui::BeginMenuBar()) {
-				ImGui::SliderInt("##CB_FO_ItemSize", &m_ItemSize, 30, AvailableSpaceW / 3.0f);
-			}
-			ImGui::EndMenuBar();
+				ImGuiContext& ctx = *ImGui::GetCurrentContext();
+				ImGuiStyle& style = ctx.Style;
+				ImDrawList* dList = ctx.CurrentWindow->DrawList;
 
-			ImGuiContext& g = *ImGui::GetCurrentContext();
-			ImDrawList* drawList = g.CurrentWindow->DrawList;
+				float y = ImGui::GetCursorPosY();
 
-			bool isGrid = m_ItemSize > 30;
-			int maxCharacters = std::string::npos;
-			if (isGrid)
-				maxCharacters = (int)roundf(m_ItemSize / style.FramePadding.x * 2.0f - g.FontSize / 2.0f) / 2.0f - 2;
+				for (size_t i = 0; i < Element->Elements.size(); i++)
+				{
+					std::shared_ptr<CB_FileElement> elem = Element->Elements[i];
 
-			uint32_t entryNum = 0;
+					uint8_t fileType = 0;
 
-			m_LastMaxSize = 0.0f;
-			for (auto entry : std::filesystem::directory_iterator(assets + "\\" + m_FolderDepth))
-			{
-				std::string name = entry.path().string();
-				name = name.substr(name.find_last_of("\\") + 1, maxCharacters);
+					if (elem->Extension == "png" || elem->Extension == "jpg" || elem->Extension == "jpeg") {
+						fileType = 1;
+					} else if (elem->IsDirectory) {
+						fileType = 2;
+					}
 
-				std::string extension = "File";
+					float localXCurrent = ImGui::GetCursorPosX();
 
-				if (std::filesystem::is_directory(entry.path())) {
-					extension = "Folder";
-				}
-				else {
-					uint32_t find_extension = entry.path().string().find_last_of(".");
-					if (find_extension != std::string::npos && find_extension <= entry.path().string().size()) {
-						try
-						{
-							extension = entry.path().string().substr(find_extension + 1);
+					if (localXCurrent + 80.0f + style.FramePadding.x > availSize.x) {
+						y += ImGui::GetCursorPosY() + 95.0f;
+						ImGui::SetCursorPos(ImVec2(localXStart, y));
+						localXCurrent = localXStart;
+					}
+					else
+						ImGui::SetCursorPosY(y);
+
+					ImVec2 cSP = ImGui::GetCursorScreenPos();
+
+					std::string sNameId = elem->Name + "##CB_FV_" + std::to_string(elem->Id);
+					const char* nameDisp = elem->Name.c_str();
+					const char* nameId = sNameId.c_str();
+
+					ImGuiID id = ImGui::GetID(nameId);
+
+					ImRect fullSize = ImRect(cSP, cSP + ImVec2(80.0f, 95.0f));
+
+					bool hovered, held;
+					if (ImGui::ButtonBehavior(fullSize, id, &hovered, &held, ImGuiButtonFlags_PressedOnDoubleClick)) {
+						if (std::filesystem::is_directory(elem->Path)) {
+							m_CurrentFolder += elem->Name + "\\";
 						}
-						catch (const std::exception& ex)
-						{
-							std::cout << ex.what() << std::endl;
-						}
 					}
-				}
 
-				TextureRef texture = NULL;
+					uint32_t colorId = 0x10ffffff;
+					if (held) colorId += 0x20ffffff;
+					else if (hovered) colorId += 0x10ffffff;
 
-				if (extension == "png" || extension == "jpg" || extension == "jpeg") {
-					if (m_Textures.count(entry.path().string()))
-						texture = m_Textures[entry.path().string()];
-					else {
-						auto output = tm->GetTexture(entry.path().string().substr(assets.size()+1));
-						texture = output;
-
-						m_Textures.insert(std::make_pair(entry.path().string(), texture));
+					GLTexture2D* texture = (GLTexture2D*)m_Textures->FromRef(m_Tex_PlainFile).get();
+					if (fileType == 1) {
+						texture = (GLTexture2D*)m_TextureManager->FromRef(m_TextureManager->GetTexture2D(elem->Path.substr(m_ProjectAssetFolder.size()))).get();
+					} else if (fileType == 2) {
+						texture = (GLTexture2D*)m_Textures->FromRef(m_Tex_FolderClosed).get();
 					}
-				}
 
-				if (isGrid) {
-					ImVec2 cPos = ImGui::GetCursorScreenPos();
-					ImVec2 cLocalPos = ImGui::GetCursorPos();
-					ImVec2 size = ImVec2(m_ItemSize, m_ItemSize + (g.FontSize + g.Style.FramePadding.y * 2)) + style.FramePadding * 2.0f;
-
-					drawList->AddRectFilled(cPos, cPos + size, 0x30000000);
-
-					if (texture == NULL)
-						drawList->AddRectFilled(cPos + style.FramePadding, cPos + ImVec2(m_ItemSize, m_ItemSize) + style.FramePadding, 0xffffffff);
-					else {
-						auto tex_face = tm->GetTextureFromRef(texture);
-						D11Texture2D* texD11 = (D11Texture2D*)tex_face.get();
-
-						drawList->AddImage(texD11->GetResourceView(), cPos + style.FramePadding, cPos + ImVec2(m_ItemSize, m_ItemSize) + style.FramePadding);
-					}
+					dList->AddRectFilled(fullSize.Min, fullSize.Max, colorId, 4.0f);
 					
-					float width = m_ItemSize;
-					ImVec2 tSize = ImGui::CalcTextSize(name.c_str());
-					ImGui::SetCursorScreenPos(cPos + ImVec2((width - tSize.x) / 2.0f, m_ItemSize) + style.FramePadding);
-					ImGui::Text(name.c_str());
+					if (texture == NULL)
+						dList->AddRectFilled(cSP + style.FramePadding * 2, cSP + ImVec2(80.0f, 80.0f) - style.FramePadding * 2, 0xffffffff, 4.0f);
+					else
+						dList->AddImageRounded((ImTextureID)texture->GetTextureId(), cSP + style.FramePadding * 2, cSP + ImVec2(80.0f, 80.0f) - style.FramePadding * 2, ImVec2(0, 0), ImVec2(1, 1), 0xffffffff, 4.0f);
 
-					if (ImGui::BeginItemTooltip()) {
-						ImGui::SetTooltip(entry.path().string().c_str());
-						ImGui::EndTooltip();
-					}
+					float textWidth = ImGui::CalcTextSize(nameDisp).x;
+					dList->AddText(cSP + ImVec2(40.0f - textWidth / 2.0f, 80.0f), 0xffffffff, nameDisp);
 
-					if (m_LastMaxSize < AvailableSpaceW - size.x * 2) {
-						ImGui::SetCursorPos(cLocalPos + ImVec2(size.x, 0.0f));
-						m_LastMaxSize += size.x;
-					}
-					else {
-						m_LastMaxSize = 0.0f;
-					}
-				}
-				else {
-					if (entryNum % 2 == 0) {
-						ImVec2 cPos = ImGui::GetCursorScreenPos(); //AddRectFilled is in screen coordinates so get cursor screen pos.
-						drawList->AddRectFilled(cPos, cPos + ImVec2(AvailableSpaceW, g.FontSize + g.Style.FramePadding.y * 2), 0x20000000);	//Yes i did write the colors in hex
-					}
+					ImGui::ItemSize(fullSize);
+					ImGui::ItemAdd(fullSize, id);
 
-					ImGui::SetCursorPos(ImGui::GetCursorPos() + ImVec2(5.0f, 3.0f));
-					ImGui::Text(name.c_str());
 					ImGui::SameLine();
-					ImGui::SetCursorPosX(AvailableSpaceW - 50.0f);
-					ImGui::Text(extension.c_str());
-				}
 
-				entryNum++;
+					ImGui::SetCursorPosX(localXCurrent + 80.0f + style.FramePadding.x);
+				}
+			}
+			else {
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "CB_FileElement pointer is null!");
 			}
 		}
 		ImGui::EndChild();
 	}
 	ImGui::End();
 
-	if (m_ReProcess <= 0.0f)
-		m_ReProcess = 10.0f; 
-	m_ReProcess -= 0.016f;
+	//m_TextureManager->UpdateClearTimer(dt);
 }

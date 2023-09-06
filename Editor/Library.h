@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef _WIN32
 #include <string>
 #include <windows.h> 
 #include <iostream>
@@ -13,3 +14,4 @@ public:
 	Library(std::string dll);
 	~Library();
 };
+#endif

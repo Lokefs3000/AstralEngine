@@ -1,22 +1,21 @@
 #include "pch.h"
 #include "Engine.h"
 
-#include "graphics/Window.h"
-#include "graphics/GraphicsContext.h"
-#include "graphics/Renderer.h"
+#include "Basics/GraphicsContext.h"
+#include "Basics/TextureManager.h"
+#include "Data/WindowData.h"
+#include "Graphics/Window.h"
+#include "SDL3/SDL.h"
+#include "glad/gl.h"
+#include <iostream>
 
-#include "resources/AssetManager.h"
-#include "resources/AssetManagerRaw.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
-#include "graphics/managers/TextureManager.h"
-#include "graphics/d11/managers/D11TextureManager.h"
-
-#include "scenes/SceneManager.h"
-
-#ifdef WINDOWS
-#include "graphics/d11/D11GraphicsContext.h"
-#include "graphics/d11/D11Renderer.h"
-#endif
+void Engine::InitializeLoadWindow()
+{
+	
+}
 
 Engine::Engine()
 {
@@ -26,124 +25,132 @@ Engine::~Engine()
 {
 }
 
-void Engine::LoadProjectConfig(std::string config)
-{
-	ProjectConfig = Configurations::LoadConfig(config);
-	m_ProjectFolder = config.substr(0, config.find_last_of("\\"));
-}
-
 void Engine::Initialize()
 {
-	for (size_t i = 0; i < EngineLayers.size(); i++)
-	{
-		EngineLayers[i]->PreInitialize();
-	}
+#pragma region GLInit
+	WindowData initWindowDesc{};
+	initWindowDesc.Width = 180 * 4;
+	initWindowDesc.Height = 71 * 4;
+	initWindowDesc.IsOpenGL = true;
+	initWindowDesc.IsBorderless = true;
+	initWindowDesc.IsResizable = false;
+	initWindowDesc.Title = "Engine initialize";
 
-	GraphicsAPI pApi = ApiUtils::GetAPI();
+	Window* initWindow = new Window(initWindowDesc);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GLContext glc = SDL_GL_CreateContext(initWindow->GetWindowCore());
+	SDL_GL_MakeCurrent(initWindow->GetWindowCore(), glc);
+	gladLoadGL(SDL_GL_GetProcAddress);
 
-	switch (pApi)
-	{
-#ifdef WINDOWS
-	case GraphicsAPI::Direct3D11:
-		m_GraphicsContext = std::make_shared<D11GraphicsContext>();
-		m_Renderer = std::make_shared<D11Renderer>();
-		m_TextureManager = std::make_shared<D11TextureManager>();
-		break;
-#endif
-	case GraphicsAPI::OpenGL:
-		break;
-	case GraphicsAPI::OpenGLES:
-		break;
-	default:
-		break;
-	}
+#pragma region Buffer
+	uint32_t VAO, VBO;
 
-	std::shared_ptr<ConfigObject> windowOptions = ProjectConfig->GetChild("ProjectConfig")->GetChild("WindowSettings");
-	m_MainWindow = std::make_shared<Window>(windowOptions->GetValue<int>("Width"), windowOptions->GetValue<int>("Height"), StringUtils::KeywordFormat(windowOptions->GetValue<std::string>("Title")), true, pApi != GraphicsAPI::Direct3D11 ? true : false);
+	float vertices[6][4] = {
+			{ -1.0f, 1.0f, 0.0f, 0.0f },
+			{ -1.0f, -1.0f, 0.0f, 1.0f },
+			{ 1.0f, -1.0f, 1.0f, 1.0f },
+			{ -1.0f, 1.0f, 0.0f, 0.0f },
+			{ 1.0f, -1.0f, 1.0f, 1.0f },
+			{ 1.0f, 1.0f, 1.0f, 0.0f }
+	};
 
-	if (ProjectConfig->GetChild("ProjectConfig")->GetChild("AssetSettings")->GetValue<bool>("IsRaw"))
-		m_AssetManager = std::make_shared<AssetManagerRaw>();
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, vertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+#pragma endregion
 
-	m_AssetManager->Initialize(m_ProjectFolder + "\\assets\\");
+#pragma region Graphic
+	int w, h;
+	stbi_uc* pixels = stbi_load("core\\assets\\textures\\thumb_main.png", &w, &h, NULL, 4);
+	uint32_t Tex;
+	glGenTextures(1, &Tex);
+	glBindTexture(GL_TEXTURE_2D, Tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
-	m_GraphicsContext->InitializeContext(m_MainWindow);
-	m_TextureManager->Initialize(m_GraphicsContext, m_AssetManager, ProjectConfig->GetChild("ProjectConfig")->GetChild("TextureManager")->GetValue<bool>("ThreadingEnabled"));
-	m_Renderer->InitializeRenderer(m_MainWindow, m_GraphicsContext);
+	stbi_image_free(pixels);
+#pragma endregion
 
-	m_SceneManager = std::make_shared<SceneManager>();
+#pragma region Shaders
+	const char* vs_src =
+		"#version 460\n"
+		"layout(location = 0) in vec4 v;\n"
+		"layout(location = 0) out vec2 t;\n"
+		"void main() {\n"
+		"gl_Position = vec4(v.xy, 0.0, 1.0);\n"
+		"t = v.zw;\n"
+		"}";
 
-	for (size_t i = 0; i < EngineLayers.size(); i++)
-	{
-		EngineLayers[i]->OnInitialize();
-	}
+	const char* fs_src =
+		"#version 460\n"
+		"layout(location=0)out vec4 f;\n"
+		"layout(location=0)in vec2 t;\n"
+		"uniform sampler2D tex;\n"
+		"void main() {\n"
+		"f = texture(tex, t);\n"
+		"}";
 
-	Watches.DeltaWatch = newStopWatch();
-	Watches.RenderWatch = newStopWatch();
-	Watches.AssetWatch = newStopWatch();
-	Watches.TextureWatch = newStopWatch();
-	Watches.LayerWatch = newStopWatch();
-	Watches.LateLayerWatch = newStopWatch();
-	Watches.EventWatch = newStopWatch();
-}
+	uint32_t vs, fs;
 
-void Engine::Run()
-{
+	vs = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vs, 1, &vs_src, NULL);
+	glCompileShader(vs);
+
+	fs = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fs, 1, &fs_src, NULL);
+	glCompileShader(fs);
+
+	uint32_t program;
+
+	program = glCreateProgram();
+	glAttachShader(program, vs);
+	glAttachShader(program, fs);
+	glLinkProgram(program);
+
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+#pragma endregion
+
+#pragma region Render
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glUseProgram(program);
+	glUniform1i(glGetUniformLocation(program, "tex"), 0);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	SDL_GL_SwapWindow(initWindow->GetWindowCore());
+
 	SDL_Event Event;
+	while (SDL_PollEvent(&Event));
+#pragma endregion
+#pragma endregion
 
-	while (!m_MainWindow->WasCloseRequested())
-	{
-		Watches.DeltaWatch->Start();
+	WindowData mainWinData{};
+	mainWinData.Width = 1280;
+	mainWinData.Height = 826;
+	mainWinData.IsOpenGL = true;
+	mainWinData.IsHidden = true;
+	mainWinData.Title = "Player";
 
-		Watches.EventWatch->Start();
-		while (SDL_PollEvent(&Event))
-		{
-			m_MainWindow->FeedEvent(Event);
+	//m_MainWindow = std::make_unique<Window>()
 
-			for (auto layer : EngineLayers)
-				layer->OnEvent(Event);
-		}
-		Watches.EventWatch->End();
+#pragma region GLEnd
+	glDeleteTextures(1, &Tex);
+	glDeleteProgram(program);
+	glDeleteBuffers(1, &VBO);
+	glDeleteVertexArrays(1, &VAO);
 
-		m_Renderer->ClearScreen();
-
-		Watches.LayerWatch->Start();
-		for (auto layer : EngineLayers)
-			layer->OnFrame();
-		Watches.LayerWatch->End();
-
-		Watches.RenderWatch->Start();
-		Watches.RenderWatch->End();
-
-		m_Renderer->PresentScreen();
-
-		Watches.LateLayerWatch->Start();
-		for (auto layer : EngineLayers)
-			layer->OnLateFrame();
-		Watches.LateLayerWatch->End();
-
-		Watches.DeltaWatch->End();
-	}
-}
-
-void Engine::Shutdown()
-{
-	for (size_t i = 0; i < EngineLayers.size(); i++)
-	{
-		EngineLayers[i]->OnExit();
-		EngineLayers[i].reset();
-	}
-	EngineLayers.clear();
-
-	m_TextureManager->Shutdown();
-
-	m_Renderer->ShutdownRenderer();
-	m_GraphicsContext->ShutdownContext();
-
-	m_TextureManager.reset();
-	m_AssetManager.reset();
-	m_Renderer.reset();
-	m_GraphicsContext.reset();
-	m_MainWindow.reset();
-
-	D11GraphicsContext::ObjectReport();
+	SDL_GL_DeleteContext(glc);
+	gladLoaderUnloadGL();
+	delete initWindow;
+#pragma endregion
 }

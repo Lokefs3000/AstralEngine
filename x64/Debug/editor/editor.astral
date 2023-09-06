@@ -1,0 +1,19 @@
+ProjectConfig: {
+    DisplayName: Editor
+    WindowSettings: {
+        Width: 1280
+        Height: 826
+        Title: AstralEditor | No project loaded | Engine: v{%eVer}
+        Resizable: true
+    }
+    RenderSettings: {
+        RenderType: 0
+        RenderToScreen: false
+    }
+    AssetSettings: {
+        IsRaw: true
+    }
+    TextureManager: {
+        ThreadingEnabled: false
+    }
+}

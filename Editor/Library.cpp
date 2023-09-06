@@ -1,5 +1,6 @@
 #include "Library.h"
 
+#ifdef _WIN32
 Library::Library(std::string dll)
 {
 	m_Module = LoadLibraryExA(dll.c_str(), NULL, 0);
@@ -13,3 +14,4 @@ Library::~Library()
 {
 	FreeLibrary(m_Module);
 }
+#endif

@@ -1,20 +1,7 @@
-﻿  Scene.cpp
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(12,22): warning C4251: 'Scene::m_GameEntities': class 'std::vector<Entity,std::allocator<Entity>>' needs to have dll-interface to be used by clients of class 'Scene'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(12,7): message : see declaration of 'std::vector<Entity,std::allocator<Entity>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(13,49): warning C4251: 'Scene::m_Components': class 'std::vector<std::shared_ptr<EntityComponents>,std::allocator<std::shared_ptr<EntityComponents>>>' needs to have dll-interface to be used by clients of class 'Scene'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(13,7): message : see declaration of 'std::vector<std::shared_ptr<EntityComponents>,std::allocator<std::shared_ptr<EntityComponents>>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(17,14): warning C4251: 'Scene::Name': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Scene'
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(5119,29): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
-  SceneManager.cpp
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\SceneManager.h(13,38): warning C4251: 'SceneManager::m_Scenes': class 'std::vector<std::shared_ptr<Scene>,std::allocator<std::shared_ptr<Scene>>>' needs to have dll-interface to be used by clients of class 'SceneManager'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\SceneManager.h(13,7): message : see declaration of 'std::vector<std::shared_ptr<Scene>,std::allocator<std::shared_ptr<Scene>>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(12,22): warning C4251: 'Scene::m_GameEntities': class 'std::vector<Entity,std::allocator<Entity>>' needs to have dll-interface to be used by clients of class 'Scene'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(12,7): message : see declaration of 'std::vector<Entity,std::allocator<Entity>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(13,49): warning C4251: 'Scene::m_Components': class 'std::vector<std::shared_ptr<EntityComponents>,std::allocator<std::shared_ptr<EntityComponents>>>' needs to have dll-interface to be used by clients of class 'Scene'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(13,7): message : see declaration of 'std::vector<std::shared_ptr<EntityComponents>,std::allocator<std::shared_ptr<EntityComponents>>>'
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.h(17,14): warning C4251: 'Scene::Name': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Scene'
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(5119,29): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
-  Generating Code...
-C:\Users\Loke\source\repos\AstralEngine\Engine\scenes\Scene.cpp(26): warning C4172: returning address of local variable or temporary: id
-     Creating library C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\Engine.lib and object C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\Engine.exp
+﻿  GLTexture2D.cpp
+C:\Users\Loke\source\repos\AstralEngine\Engine\Debug\Logger.h(18,2): warning C4091: 'static ': ignored on left of 'Logger' when no variable is declared
+C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\GL\Resources\GLTexture2D.cpp(44,32): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
+C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\GL\Resources\GLTexture2D.cpp(47,77): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\GL\Resources\GLTexture2D.cpp(47,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\GL\Resources\GLTexture2D.cpp(47,34): warning C4267: 'argument': conversion from 'size_t' to 'GLint', possible loss of data
   Engine.vcxproj -> C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\Engine.dll

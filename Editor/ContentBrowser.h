@@ -1,40 +1,53 @@
 #pragma once
 
-#include "ImGui/imgui.h"
-#include "ImGui/imgui_internal.h"
-
-#include <graphics/managers/TextureRef.h>
-#include <graphics/managers/TextureManager.h>
-
-#define EXPOSE_TEXTURE2D
-#include <graphics/d11/resources/D11Texture2D.h>
-
-#include <iostream>
 #include <string>
-#include <filesystem>
+#include <vector>
+#include <map>
+#include <memory>
 
-struct CB_FileTreeElement {
-	uint32_t Id;
-	std::vector<std::shared_ptr<CB_FileTreeElement>> Children;
-	bool HasParent = false;
-	std::string Name;
+struct TextureRef;
+class GLTextureManager;
+__interface ITexture;
+__interface IAssetManager;
+__interface ITextureManager;
+class GLTexture2D;
+
+struct CB_FileElement {
+public:
+	std::string Path = "";
+	std::string Name = "";
+	std::string Extension = "";
+
+	uint32_t Id = 0;
+
+	bool IsDirectory = false;
+
+	std::vector<std::shared_ptr<CB_FileElement>> Elements;
 };
 
 class ContentBrowser {
 private:
-	std::vector<std::shared_ptr<CB_FileTreeElement>> m_FileTreeElements;
-	void SearchTree(std::shared_ptr<CB_FileTreeElement> Parent, std::string Path, uint32_t& Id);
-	bool SearchTreeElements(std::shared_ptr<CB_FileTreeElement> Parent);
-	bool CustomNode(const char* label, ImGuiTreeNodeFlags flags);
+	std::string m_ProjectAssetFolder = "";
+	std::string m_CurrentFolder = "";
 
-	std::map<std::string, TextureRef> m_Textures;
+	float m_SearchTime = 0.0f;
+	std::shared_ptr<CB_FileElement> m_Root;
+	std::map<std::string, std::shared_ptr<CB_FileElement>> m_DirElementMap;
 
-	int m_ItemSize = 55; //TODO: tweak maybe
-	float m_LastMaxSize = 9999999.0f; //Big
+	std::unique_ptr<GLTextureManager> m_TextureManager;
+	std::shared_ptr<ITextureManager> m_Textures;
 
-	float m_ReProcess = 0.0f;
+	std::shared_ptr<TextureRef> m_Tex_FolderClosed;
+	std::shared_ptr<TextureRef> m_Tex_FolderOpened;
+	std::shared_ptr<TextureRef> m_Tex_Model;
+	std::shared_ptr<TextureRef> m_Tex_PlainFile;
 
-	std::string m_FolderDepth = "";
+	void SearchFileStructure(std::shared_ptr<CB_FileElement> Element, uint32_t& Id);
+
+	void ShowFileTreeNodes(std::shared_ptr<CB_FileElement> Element);
+	bool ShowFileTreeNode(std::shared_ptr<CB_FileElement> Element, GLTexture2D* opened, GLTexture2D* closed);
 public:
-	void Render(std::shared_ptr<ITextureManager> tm, std::string assets);
+	ContentBrowser(std::string assets, std::shared_ptr<IAssetManager> assetManager, std::shared_ptr<ITextureManager> textures);
+
+	void Render(float dt);
 };
