@@ -21,79 +21,70 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VarData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\GraphicsCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Basics\Initializable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\GraphicsCoreData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\VulkanUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Graphics\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Data\WindowData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VarData.h">
+    <ClInclude Include="Basics\EventPoller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Engine.h">
+    <ClInclude Include="Event\EventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Basics\GraphicsContext.h">
+    <ClInclude Include="Graphics\DeviceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Data\ContextData.h">
+    <ClInclude Include="Data\DeviceManagerData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\GL\GLGraphicsContext.h">
+    <ClInclude Include="Utilities\DeviceUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Data\Enum\GraphicsAPI.h">
+    <ClInclude Include="Graphics\ShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Format\AstralLoader.h">
+    <ClInclude Include="Graphics\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Data\AstralData.h">
+    <ClInclude Include="Data\ShaderManagerData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Debug\Logger.h">
+    <ClInclude Include="Graphics\SwapChainManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Data\Enum\LogSeverity.h">
+    <ClInclude Include="Data\SwapChainManagerData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utlities\StringUtils.h">
+    <ClInclude Include="Utilities\SwapChainUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\VK\VkGraphicsPipeline.h">
+    <ClInclude Include="Graphics\RendererCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utlities\PlatformUtils.h">
+    <ClInclude Include="Data\RendererCoreData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Basics\TextureManager.h">
+    <ClInclude Include="Graphics\DebugRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Data\TextureManagerData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Data\Enum\TextureType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Basics\AssetManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Basics\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\GL\Resources\GLTexture2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\RawAssetManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\GL\Managers\GLTextureManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Data\TextureData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Data\ContextBase.h">
+    <ClInclude Include="Data\DebugRendererData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -104,37 +95,43 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="gl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\GL\GLGraphicsContext.cpp">
+    <ClCompile Include="graphics\GraphicsCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Format\AstralLoader.cpp">
+    <ClCompile Include="Utilities\VulkanUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utlities\StringUtils.cpp">
+    <ClCompile Include="Graphics\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\VK\VkGraphicsPipeline.cpp">
+    <ClCompile Include="Event\EventHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utlities\PlatformUtils.cpp">
+    <ClCompile Include="Graphics\DeviceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\RawAssetManager.cpp">
+    <ClCompile Include="Utilities\DeviceUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\GL\Managers\GLTextureManager.cpp">
+    <ClCompile Include="Graphics\ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\GL\Resources\GLTexture2D.cpp">
+    <ClCompile Include="Graphics\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\SwapChainManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\SwapChainUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RendererCore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\DebugRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

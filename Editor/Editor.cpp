@@ -1,16 +1,17 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 #include "Library.h"
-
 #include "EdEngine.h"
 
 int main(int argc, char* argv[])
 {
 #ifdef _WIN32
 	std::unique_ptr<Library> sdl3Library = std::make_unique<Library>("core\\SDL3.dll");
-	std::unique_ptr<Library> engineLibrary = std::make_unique<Library>("core\\Engine.dll");
+	std::unique_ptr<Library> ashaderLibrary = std::make_unique<Library>("core\\ashader.dll");
+	std::unique_ptr<Library> engineLibrary = std::make_unique<Library>("core\\engine.dll");
 #endif
 
 	std::vector<std::string> args;

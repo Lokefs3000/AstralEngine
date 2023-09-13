@@ -2,36 +2,27 @@
 
 #include "VarData.h"
 
-#ifdef ALLOW_INCLUDE
-#include <SDL3/SDL_events.h>
-#endif
+#include <SDL3/SDL.h>
 
-struct SDL_Window;
+#include "Basics/Initializable.h"
+#include "Basics/EventPoller.h"
+
 struct WindowData;
 
-class EXPORT Window {
+class Window : public IInitializable,
+			   public IEventPoller {
 private:
-#ifdef ALLOW_INCLUDE
-	SDL_Window* m_Window = NULL;
+	SDL_Window* m_Window;
+
 	bool m_IsClosed = false;
-#endif
+	bool m_IsMinimized = false;
 public:
-	Window(WindowData& data);
-	~Window();
+	void EXPORT Initialize(InitializableBasic* data) override;
+	void EXPORT Shutdown() override;
 
-	void SetBorderState(bool enabled = false);
-	void SetResizable(bool enabled = false);
+	void EXPORT PushEvent(SDL_Event& Event) override;
 
-	void ShowWindow();
-	void HideWindow();
-
-	void Resize(uint32_t Width, uint32_t Height);
-	void Center();
-
-	bool IsClosed();
-
-#ifdef ALLOW_INCLUDE
-	void SendEvent(SDL_Event& Event);
-	SDL_Window* GetWindowCore();
-#endif
+	bool IsMinimized() { return m_IsMinimized; }
+	bool IsClosed() { return m_IsClosed; }
+	SDL_Window* GetSDLWindow() { return m_Window; }
 };

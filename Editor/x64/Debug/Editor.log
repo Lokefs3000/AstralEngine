@@ -1,4 +1,2 @@
-﻿  ContentBrowser.cpp
-C:\Users\Loke\source\repos\AstralEngine\Editor\ContentBrowser.cpp(101,29): warning C4312: 'type cast': conversion from 'uint32_t' to 'ImTextureID' of greater size
-C:\Users\Loke\source\repos\AstralEngine\Editor\ContentBrowser.cpp(236,30): warning C4312: 'type cast': conversion from 'uint32_t' to 'ImTextureID' of greater size
+﻿  EdEngine.cpp
   Editor.vcxproj -> C:\Users\Loke\source\repos\AstralEngine\x64\Debug\Editor.exe

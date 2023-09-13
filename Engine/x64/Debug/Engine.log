@@ -1,7 +1,5 @@
-﻿  GLTexture2D.cpp
-C:\Users\Loke\source\repos\AstralEngine\Engine\Debug\Logger.h(18,2): warning C4091: 'static ': ignored on left of 'Logger' when no variable is declared
-C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\GL\Resources\GLTexture2D.cpp(44,32): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
-C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\GL\Resources\GLTexture2D.cpp(47,77): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\GL\Resources\GLTexture2D.cpp(47,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\GL\Resources\GLTexture2D.cpp(47,34): warning C4267: 'argument': conversion from 'size_t' to 'GLint', possible loss of data
-  Engine.vcxproj -> C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\Engine.dll
+﻿  GraphicsCore.cpp
+C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(37,55): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(42,52): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+     Creating library C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.lib and object C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.exp
+  Engine.vcxproj -> C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.dll

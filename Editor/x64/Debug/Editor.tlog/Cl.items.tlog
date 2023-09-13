@@ -1,5 +1,4 @@
 C:\Users\Loke\source\repos\AstralEngine\Engine\gl.c;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\gl.obj
-C:\Users\Loke\source\repos\AstralEngine\Editor\ContentBrowser.cpp;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\ContentBrowser.obj
 C:\Users\Loke\source\repos\AstralEngine\Editor\Editor.cpp;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\Editor.obj
 C:\Users\Loke\source\repos\AstralEngine\Editor\EdEngine.cpp;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\EdEngine.obj
 C:\Users\Loke\source\repos\AstralEngine\Editor\ImGui\imgui.cpp;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\imgui.obj
@@ -11,4 +10,3 @@ C:\Users\Loke\source\repos\AstralEngine\Editor\ImGui\imgui_stdlib.cpp;C:\Users\L
 C:\Users\Loke\source\repos\AstralEngine\Editor\ImGui\imgui_tables.cpp;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\imgui_tables.obj
 C:\Users\Loke\source\repos\AstralEngine\Editor\ImGui\imgui_widgets.cpp;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\imgui_widgets.obj
 C:\Users\Loke\source\repos\AstralEngine\Editor\Library.cpp;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\Library.obj
-C:\Users\Loke\source\repos\AstralEngine\Editor\ProjectManager.cpp;C:\Users\Loke\source\repos\AstralEngine\Editor\x64\Debug\ProjectManager.obj

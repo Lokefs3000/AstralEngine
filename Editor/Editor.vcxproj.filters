@@ -69,12 +69,6 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>Source Files\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ProjectManager.cpp">
-      <Filter>Source Files\ProjectManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ContentBrowser.cpp">
-      <Filter>Source Files\Content</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library.h">
@@ -112,12 +106,6 @@
     </ClInclude>
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>Header Files\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectManager.h">
-      <Filter>Header Files\ProjectManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ContentBrowser.h">
-      <Filter>Header Files\Content</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,3 +10,7 @@ CMake/
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 CMakeLists.txt
+
+Engine/x64/
+Editor/x64/
+AShader/x64/

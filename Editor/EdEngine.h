@@ -1,29 +1,23 @@
 #pragma once
 
 #include <memory>
-
-#include <Debug/Logger.h>
-
-#include "ProjectManager.h"
-#include "ContentBrowser.h"
+#include <vector>
+#include <string>
+#include <mutex>
 
 class Window;
-__interface ITextureManager;
-__interface IGraphicsContext;
-__interface IAssetManager;
+class GraphicsCore;
+class EventHandler;
 
 class EdEngine {
 private:
-	std::shared_ptr<Window> m_MainWindow;
-	std::shared_ptr<IGraphicsContext> m_Context;
-	std::shared_ptr<ITextureManager> m_Textures;
+	std::shared_ptr<Window> m_Window;
+	std::shared_ptr<GraphicsCore> m_Graphics;
+	std::shared_ptr<EventHandler> m_EventPoller;
 
-	std::shared_ptr<IAssetManager> m_AssetManager;
-	std::shared_ptr<IAssetManager> m_ProjectAssetManager;
-
-	std::unique_ptr<ProjectManager> m_ProjectManager;
-
-	std::unique_ptr<ContentBrowser> m_ContentBrowser;
+	std::mutex m_SyncingMutex;
+	std::condition_variable m_SyncingVariable;
+	bool m_LogicCompleted;
 
 	float m_DeltaTime = 0.0f;
 
