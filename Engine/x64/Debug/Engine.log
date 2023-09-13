@@ -1,5 +1,8 @@
-﻿  GraphicsCore.cpp
-C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(37,55): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(42,52): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+﻿  SwapChainManager.cpp
+  Window.cpp
+  SwapChainUtils.cpp
+  GraphicsCore.cpp
+C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(39,55): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(44,52): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
      Creating library C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.lib and object C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.exp
   Engine.vcxproj -> C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.dll

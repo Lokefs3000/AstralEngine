@@ -1,13 +1,16 @@
 #include "pch.h"
 #include "RendererCore.h"
 
+#include <iostream>
+
 #include "Data/RendererCoreData.h"
 #include "Data/DeviceManagerData.h"
 
 #include "Utilities/DeviceUtils.h"
 
 #include "SwapChainManager.h"
-#include <iostream>
+
+#include "Debug/VulkanDebug.h"
 
 void RendererCore::CreateCommandPool(RendererCoreData& data)
 {
@@ -18,9 +21,7 @@ void RendererCore::CreateCommandPool(RendererCoreData& data)
 	poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	poolInfo.queueFamilyIndex = queueFamilyIndices.GraphicsFamily.value();
 
-	if (vkCreateCommandPool(data.Device, &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkCreateCommandPool(data.Device, &poolInfo, nullptr, &m_CommandPool));
 }
 
 void RendererCore::CreateCommandBuffers(RendererCoreData& data)
@@ -33,9 +34,7 @@ void RendererCore::CreateCommandBuffers(RendererCoreData& data)
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	allocInfo.commandBufferCount = data.MaxFramesInFlight;
 
-	if (vkAllocateCommandBuffers(data.Device, &allocInfo, m_CommandBuffer.data()) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkAllocateCommandBuffers(data.Device, &allocInfo, m_CommandBuffer.data()));
 }
 
 void RendererCore::CreateSyncObjects(RendererCoreData& data)
@@ -52,12 +51,9 @@ void RendererCore::CreateSyncObjects(RendererCoreData& data)
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
 	for (size_t i = 0; i < data.MaxFramesInFlight; i++) {
-		if (vkCreateSemaphore(data.Device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphore[i]) != VK_SUCCESS ||
-			vkCreateSemaphore(data.Device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphore[i]) != VK_SUCCESS ||
-			vkCreateFence(data.Device, &fenceInfo, nullptr, &m_InFlightFence[i]) != VK_SUCCESS) {
-
-			
-		}
+		VkLocalCheckF(vkCreateSemaphore(data.Device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphore[i]));
+		VkLocalCheckF(vkCreateSemaphore(data.Device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphore[i]));
+		VkLocalCheckF(vkCreateFence(data.Device, &fenceInfo, nullptr, &m_InFlightFence[i]));
 	}
 }
 
@@ -68,9 +64,7 @@ void RendererCore::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t i
 	beginInfo.flags = 0; // Optional
 	beginInfo.pInheritanceInfo = nullptr; // Optional
 
-	if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkBeginCommandBuffer(commandBuffer, &beginInfo))
 
 	VkRenderPassBeginInfo renderPassInfo{};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -90,9 +84,7 @@ void RendererCore::StopCommandBuffer(VkCommandBuffer commandBuffer)
 {
 	vkCmdEndRenderPass(commandBuffer);
 
-	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkEndCommandBuffer(commandBuffer));
 }
 
 void RendererCore::Initialize(InitializableBasic* data)
@@ -125,7 +117,7 @@ void RendererCore::Shutdown()
 
 void RendererCore::DrawFrame()
 {
-	vkWaitForFences(mR_Device, 1, &m_InFlightFence[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+	VkLocalCheckF(vkWaitForFences(mR_Device, 1, &m_InFlightFence[m_CurrentFrame], VK_TRUE, UINT64_MAX));
 
 	uint32_t imageIndex;
 	VkResult result = vkAcquireNextImageKHR(mR_Device, mR_SwapChainManager->GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphore[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
@@ -134,12 +126,12 @@ void RendererCore::DrawFrame()
 		return;
 	}
 	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-		throw std::runtime_error("failed to acquire swap chain image!");
+		VkLocalCheckF(result);
 	}
 
-	vkResetFences(mR_Device, 1, &m_InFlightFence[m_CurrentFrame]);
+	VkLocalCheckF(vkResetFences(mR_Device, 1, &m_InFlightFence[m_CurrentFrame]));
 
-	vkResetCommandBuffer(m_CommandBuffer[m_CurrentFrame], 0);
+	VkLocalCheckF(vkResetCommandBuffer(m_CommandBuffer[m_CurrentFrame], 0));
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -164,9 +156,7 @@ void RendererCore::DrawFrame()
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	if (vkQueueSubmit(mR_GraphicsQueue, 1, &submitInfo, m_InFlightFence[m_CurrentFrame]) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkQueueSubmit(mR_GraphicsQueue, 1, &submitInfo, m_InFlightFence[m_CurrentFrame]));
 
 	VkPresentInfoKHR presentInfo{};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -185,7 +175,7 @@ void RendererCore::DrawFrame()
 		mR_SwapChainManager->RecreateSwapChain(false);
 	}
 	else if (result != VK_SUCCESS) {
-		throw std::runtime_error("failed to present swap chain image!");
+		VkLocalCheckF(result);
 	}
 
 	m_CurrentFrame = (m_CurrentFrame + 1) % mR_MaxFramesInFlight;

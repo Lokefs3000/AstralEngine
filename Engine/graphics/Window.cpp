@@ -19,10 +19,17 @@ void Window::PushEvent(SDL_Event& Event)
 {
 	if (Event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
 		m_IsClosed = true;
-	} else if (Event.type == SDL_EVENT_WINDOW_MINIMIZED) {
+	}
+	else if (Event.type == SDL_EVENT_WINDOW_MINIMIZED) {
 		m_IsMinimized = true;
 	}
-	else if (Event.type == SDL_EVENT_WINDOW_SHOWN) {
+	else if (Event.type == SDL_EVENT_WINDOW_EXPOSED) {
 		m_IsMinimized = false;
 	}
+}
+
+void Window::Expose()
+{
+	m_IsMinimized = false;
+	SDL_RestoreWindow(m_Window);
 }

@@ -15,6 +15,7 @@ class DeviceManager;
 class ShaderManager;
 class SwapChainManager;
 class RendererCore;
+class Window;
 
 class GraphicsCore : public IInitializable {
 private:
@@ -30,6 +31,8 @@ private:
 	SwapChainManager* m_SwapChainManager;
 	ShaderManager* m_ShaderManager;
 	RendererCore* m_RendererCore;
+
+	Window* mR_Window;
 
 	bool m_RenderThreadEnding;
 	std::thread m_RenderThread;

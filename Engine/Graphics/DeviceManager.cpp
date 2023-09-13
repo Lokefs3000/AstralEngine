@@ -9,6 +9,8 @@
 #include "Utilities/DeviceUtils.h"
 #include <set>
 
+#include "Debug/VulkanDebug.h"
+
 void DeviceManager::PickPhysicalDevice(DeviceManagerData& data)
 {
 	uint32_t deviceCount = 0;
@@ -34,7 +36,7 @@ void DeviceManager::PickPhysicalDevice(DeviceManagerData& data)
 		m_PhysicalDevice = candidates.rbegin()->second;
 	}
 	else {
-		
+		VkLocalCheckF(VK_ERROR_UNKNOWN);
 	}
 }
 
@@ -77,9 +79,7 @@ void DeviceManager::CreateLogicalDevice(DeviceManagerData& data)
 		createInfo.enabledLayerCount = 0;
 	}
 
-	if (vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_LogicalDevice) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_LogicalDevice));
 }
 
 void DeviceManager::GetDeviceQueues(DeviceManagerData& data)

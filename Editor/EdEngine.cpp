@@ -64,7 +64,7 @@ void EdEngine::Initialize(std::vector<std::string> Arguments)
 	m_EventPoller->Initialize(NULL);
 	m_EventPoller->AddPoller(std::bind(&Window::PushEvent, m_Window.get(), std::placeholders::_1));
 	m_EventPoller->AddPoller([this](SDL_Event& Event) {
-		if (Event.type == SDL_EVENT_WINDOW_SHOWN)
+		if (Event.type == SDL_EVENT_WINDOW_EXPOSED)
 			m_Graphics->GetSwapChainManager()->OnMinimizeEnd();
 	});
 }
@@ -80,12 +80,17 @@ void EdEngine::Run()
 		m_EventPoller->PollEvents();
 
 		m_LogicCompleted = true;
-		if (m_LogicCompleted && !m_Graphics->RenderingThreadCompleted) {
-			std::unique_lock<std::mutex> lock(m_SyncingMutex);
-			m_SyncingVariable.wait(lock, [this] { return m_Graphics->RenderingThreadCompleted; });
+		if (m_Window->IsMinimized()) {
+			SDL_WaitEvent(NULL);
 		}
 		else {
-			m_SyncingVariable.notify_all();
+			if (m_LogicCompleted && !m_Graphics->RenderingThreadCompleted) {
+				std::unique_lock<std::mutex> lock(m_SyncingMutex);
+				m_SyncingVariable.wait(lock, [this] { return m_Graphics->RenderingThreadCompleted; });
+			}
+			else {
+				m_SyncingVariable.notify_all();
+			}
 		}
 	}
 

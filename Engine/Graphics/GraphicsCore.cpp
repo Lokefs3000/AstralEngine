@@ -19,6 +19,8 @@
 #include "Utilities/VulkanUtils.h"
 #include "Utilities/SwapChainUtils.h"
 
+#include "Debug/VulkanDebug.h"
+
 void GraphicsCore::CreateInstance(GraphicsCoreData& data)
 {
     VkApplicationInfo appInfo{};
@@ -47,7 +49,7 @@ void GraphicsCore::CreateInstance(GraphicsCoreData& data)
         createInfo.pNext = &debugCreateInfo;
     }
 
-    VkResult result = vkCreateInstance(&createInfo, nullptr, &m_Instance);
+    VkLocalCheckF(vkCreateInstance(&createInfo, nullptr, &m_Instance));
 }
 
 void GraphicsCore::CreateDebugMessenger()
@@ -57,7 +59,7 @@ void GraphicsCore::CreateDebugMessenger()
     VkDebugUtilsMessengerCreateInfoEXT createInfo{};
     VulkanUtils::FillDebugMessengerInfo(createInfo);
 
-    VkResult result = VulkanUtils::CreateDebugUtilsMessengerEXT(m_Instance, &createInfo, NULL, &m_DebugUtils);
+    VkLocalCheckF(VulkanUtils::CreateDebugUtilsMessengerEXT(m_Instance, &createInfo, NULL, &m_DebugUtils));
 }
 
 void GraphicsCore::CreateSurface(GraphicsCoreData& data)
@@ -122,9 +124,7 @@ void GraphicsCore::CreateRenderPass(GraphicsCoreData& _data)
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
 
-    if (vkCreateRenderPass(m_DeviceManager->GetLogicalDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
-        
-    }
+    VkLocalCheckF(vkCreateRenderPass(m_DeviceManager->GetLogicalDevice(), &renderPassInfo, nullptr, &m_RenderPass));
 }
 
 void GraphicsCore::CreateSwapChainManager(GraphicsCoreData& _data)
@@ -181,14 +181,15 @@ void GraphicsCore::Initialize(InitializableBasic* data)
     CreateShaderManager();
     CreateRendererCore();
 
-    std::cout << xg::newGuid() << std::endl;
-    std::cout << xg::newGuid() << std::endl;
+    mR_Window = mdata.TargetWindow;
 }
 
 void GraphicsCore::Shutdown()
 {
     m_RenderThreadEnding = true;
     (*mR_SyncVariable).notify_all();
+    mR_Window->Expose();
+    m_SwapChainManager->OnMinimizeEnd();
 
     vkDeviceWaitIdle(m_DeviceManager->GetLogicalDevice());
 

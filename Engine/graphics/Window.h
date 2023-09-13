@@ -22,6 +22,8 @@ public:
 
 	void EXPORT PushEvent(SDL_Event& Event) override;
 
+	void EXPORT Expose();
+
 	bool IsMinimized() { return m_IsMinimized; }
 	bool IsClosed() { return m_IsClosed; }
 	SDL_Window* GetSDLWindow() { return m_Window; }

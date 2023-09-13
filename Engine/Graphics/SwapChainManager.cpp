@@ -11,6 +11,8 @@
 
 #include "Graphics/Window.h"
 
+#include "Debug/VulkanDebug.h"
+
 void SwapChainManager::CreateSwapChain(SwapChainManagerData& data)
 {
     SwapChainSupportDetails swapChainSupport = SwapChainUtils::QuerySwapChainSupport(data.PhysicalDevice, data.Surface);
@@ -55,9 +57,7 @@ void SwapChainManager::CreateSwapChain(SwapChainManagerData& data)
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    if (vkCreateSwapchainKHR(data.Device, &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
-        
-    }
+    VkLocalCheckF(vkCreateSwapchainKHR(data.Device, &createInfo, nullptr, &m_SwapChain));
 
     m_SwapChainImageFormat = surfaceFormat.format;
     m_SwapChainExtent = extent;
@@ -67,9 +67,9 @@ void SwapChainManager::CreateSwapChainImages(SwapChainManagerData& data)
 {
     uint32_t imageCount = 0;
 
-    vkGetSwapchainImagesKHR(data.Device, m_SwapChain, &imageCount, nullptr);
+    VkLocalCheckF(vkGetSwapchainImagesKHR(data.Device, m_SwapChain, &imageCount, nullptr));
     m_SwapChainImages.resize(imageCount);
-    vkGetSwapchainImagesKHR(data.Device, m_SwapChain, &imageCount, m_SwapChainImages.data());
+    VkLocalCheckF(vkGetSwapchainImagesKHR(data.Device, m_SwapChain, &imageCount, m_SwapChainImages.data()));
 }
 
 void SwapChainManager::CreateSwapChainImageViews(SwapChainManagerData& data)
@@ -92,9 +92,7 @@ void SwapChainManager::CreateSwapChainImageViews(SwapChainManagerData& data)
         createInfo.subresourceRange.baseArrayLayer = 0;
         createInfo.subresourceRange.layerCount = 1;
 
-        if (vkCreateImageView(data.Device, &createInfo, nullptr, &m_SwapChainImageViews[i]) != VK_SUCCESS) {
-            
-        }
+        VkLocalCheckF(vkCreateImageView(data.Device, &createInfo, nullptr, &m_SwapChainImageViews[i]));
     }
 }
 
@@ -116,15 +114,13 @@ void SwapChainManager::CreateSwapChainFramebuffers(SwapChainManagerData& data)
         framebufferInfo.height = m_SwapChainExtent.height;
         framebufferInfo.layers = 1;
 
-        if (vkCreateFramebuffer(data.Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]) != VK_SUCCESS) {
-            
-        }
+        VkLocalCheckF(vkCreateFramebuffer(data.Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]));
     }
 }
 
 void SwapChainManager::RecreateSwapChain(bool isResized)
 {
-    vkDeviceWaitIdle(mR_Device);
+    VkLocalCheckF(vkDeviceWaitIdle(mR_Device));
 
     int w, h;
     SDL_GetWindowSizeInPixels(mR_TargetWindow->GetSDLWindow(), &w, &h);

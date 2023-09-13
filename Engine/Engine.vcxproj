@@ -107,6 +107,8 @@
     <ClInclude Include="Data\ShaderManagerData.h" />
     <ClInclude Include="Data\SwapChainManagerData.h" />
     <ClInclude Include="Data\WindowData.h" />
+    <ClInclude Include="Debug\LogPrinter.h" />
+    <ClInclude Include="Debug\VulkanDebug.h" />
     <ClInclude Include="Event\EventHandler.h" />
     <ClInclude Include="Graphics\DebugRenderer.h" />
     <ClInclude Include="Graphics\DeviceManager.h" />
@@ -124,6 +126,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Debug\VulkanDebug.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Event\EventHandler.cpp" />
     <ClCompile Include="gl.c">

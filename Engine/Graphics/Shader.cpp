@@ -3,6 +3,8 @@
 
 #include "Data/ShaderManagerData.h"
 
+#include "Debug/VulkanDebug.h"
+
 void Shader::CreateShaders(ShaderData& data)
 {
 	m_VertexShader = CreateShaderModule(data, data.VertBytecode);
@@ -18,9 +20,7 @@ void Shader::CreatePipelineLayout(ShaderData& data)
 	pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 	pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
-	if (vkCreatePipelineLayout(data.Device, &pipelineLayoutInfo, nullptr, &m_Layout) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkCreatePipelineLayout(data.Device, &pipelineLayoutInfo, nullptr, &m_Layout));
 }
 
 void Shader::CreatePipeline(ShaderData& data)
@@ -141,9 +141,7 @@ void Shader::CreatePipeline(ShaderData& data)
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 	pipelineInfo.basePipelineIndex = -1; // Optional
 
-	if (vkCreateGraphicsPipelines(data.Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkCreateGraphicsPipelines(data.Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
 }
 
 VkShaderModule Shader::CreateShaderModule(ShaderData& data, const std::vector<uint32_t>& code)
@@ -154,9 +152,7 @@ VkShaderModule Shader::CreateShaderModule(ShaderData& data, const std::vector<ui
 	createInfo.pCode = code.data();
 
 	VkShaderModule shaderModule;
-	if (vkCreateShaderModule(data.Device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-		
-	}
+	VkLocalCheckF(vkCreateShaderModule(data.Device, &createInfo, nullptr, &shaderModule));
 
 	return shaderModule;
 }
