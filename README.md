@@ -1,9 +1,9 @@
 # AstralEngine
-verifying...
-ram - ok
-cpu - ok
-code - failed
-functional - unresolved
-memoryleak - very positive
-check completed..
-status - good enough
+verifying...<br>
+ram - ok<br>
+cpu - ok<br>
+code - failed<br>
+functional - unresolved<br>
+memoryleak - very positive<br>
+check completed..<br>
+status - good enough<br>
