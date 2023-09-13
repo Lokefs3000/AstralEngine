@@ -7,6 +7,7 @@
 #include "Basics/Initializable.h"
 
 class SwapChainManager;
+class AssetManager;
 
 struct RendererCoreData : public InitializableBasic {
 public:
@@ -17,6 +18,8 @@ public:
 	VkDevice Device;
 	VkQueue GraphicsQueue;
 	VkQueue PresentQueue;
+
+	AssetManager* AssetManager;
 
 	uint32_t MaxFramesInFlight;
 };

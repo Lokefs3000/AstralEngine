@@ -1,8 +1,56 @@
-﻿  SwapChainManager.cpp
-  Window.cpp
-  SwapChainUtils.cpp
+﻿  DebugRenderer.cpp
   GraphicsCore.cpp
-C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(39,55): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(44,52): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-     Creating library C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.lib and object C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.exp
-  Engine.vcxproj -> C:\Users\Loke\source\repos\AstralEngine\x64\Debug\core\engine.dll
+  ShaderManager.cpp
+C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(41,55): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\Users\Loke\source\repos\AstralEngine\Engine\graphics\GraphicsCore.cpp(46,52): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(506,24): error C2676: binary '<': 'const _Ty1' does not define this operator or a conversion to a type acceptable to the predefined operator
+          with
+          [
+              _Ty1=xg::Guid
+          ] (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(505,27): message : could be 'bool std::operator <(const std::pair<_Ty1,_Ty2> &,const std::pair<_Uty1,_Uty2> &)' (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(506,17): message : 'bool std::operator <(const std::pair<_Ty1,_Ty2> &,const std::pair<_Uty1,_Uty2> &)': could not deduce template argument for 'const std::pair<_Ty1,_Ty2> &' from 'const _Ty1'
+          with
+          [
+              _Ty1=xg::Guid
+          ] (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\type_traits(2465,22): message : see reference to function template instantiation 'bool std::operator <<xg::Guid,xg::Guid,xg::Guid,xg::Guid>(const std::pair<xg::Guid,xg::Guid> &,const std::pair<xg::Guid,xg::Guid> &)' being compiled (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\type_traits(2463,31): message : while compiling class template member function 'bool std::less<std::pair<xg::Guid,xg::Guid>>::operator ()(const _Ty &,const _Ty &) noexcept(false) const'
+          with
+          [
+              _Ty=std::pair<xg::Guid,xg::Guid>
+          ] (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xutility(1354,24): message : see the first reference to 'std::less<std::pair<xg::Guid,xg::Guid>>::operator ()' in 'std::_Debug_lt_pred' (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(1505,59): message : see reference to class template instantiation 'std::less<std::pair<xg::Guid,xg::Guid>>' being compiled (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(1505,42): message : see reference to variable template 'const bool is_empty_v<std::less<std::pair<xg::Guid,xg::Guid> > >' being compiled (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\map(73,20): message : see reference to class template instantiation 'std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>' being compiled
+          with
+          [
+              _Kty=std::pair<xg::Guid,xg::Guid>,
+              _Ty=ShaderData *,
+              _Pr=std::less<std::pair<xg::Guid,xg::Guid>>,
+              _Alloc=std::allocator<std::pair<const std::pair<xg::Guid,xg::Guid>,ShaderData *>>
+          ] (compiling source file Graphics\ShaderManager.cpp)
+C:\Users\Loke\source\repos\AstralEngine\Engine\Graphics\ShaderManager.h(26,55): message : see reference to class template instantiation 'std::map<std::pair<xg::Guid,xg::Guid>,ShaderData *,std::less<std::pair<xg::Guid,xg::Guid>>,std::allocator<std::pair<const std::pair<xg::Guid,xg::Guid>,ShaderData *>>>' being compiled (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(506,58): error C2676: binary '<': 'const _Ty1' does not define this operator or a conversion to a type acceptable to the predefined operator
+          with
+          [
+              _Ty1=xg::Guid
+          ] (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(505,27): message : could be 'bool std::operator <(const std::pair<_Ty1,_Ty2> &,const std::pair<_Uty1,_Uty2> &)' (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(506,51): message : 'bool std::operator <(const std::pair<_Ty1,_Ty2> &,const std::pair<_Uty1,_Uty2> &)': could not deduce template argument for 'const std::pair<_Ty1,_Ty2> &' from 'const _Ty1'
+          with
+          [
+              _Ty1=xg::Guid
+          ] (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(506,89): error C2676: binary '<': 'const _Ty2' does not define this operator or a conversion to a type acceptable to the predefined operator
+          with
+          [
+              _Ty2=xg::Guid
+          ] (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(505,27): message : could be 'bool std::operator <(const std::pair<_Ty1,_Ty2> &,const std::pair<_Uty1,_Uty2> &)' (compiling source file Graphics\ShaderManager.cpp)
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\utility(506,81): message : 'bool std::operator <(const std::pair<_Ty1,_Ty2> &,const std::pair<_Uty1,_Uty2> &)': could not deduce template argument for 'const std::pair<_Ty1,_Ty2> &' from 'const _Ty2'
+          with
+          [
+              _Ty2=xg::Guid
+          ] (compiling source file Graphics\ShaderManager.cpp)

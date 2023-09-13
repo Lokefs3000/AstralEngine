@@ -21,6 +21,7 @@ private:
 	std::vector<VkFence> m_InFlightFence;
 
 	uint32_t m_CurrentFrame = 0;
+	uint32_t m_ImageIndex = 0;
 
 	VkDevice mR_Device;
 	VkRenderPass mR_RenderPass;
@@ -41,4 +42,5 @@ public:
 	void EXPORT Shutdown() override;
 
 	void EXPORT DrawFrame();
+	void EXPORT EndFrame();
 };

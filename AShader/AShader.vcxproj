@@ -162,6 +162,7 @@
     <ClInclude Include="Shader\ShaderCompiler.h" />
     <ClInclude Include="Shader\ShaderWorker.h" />
     <ClInclude Include="Shader\ShaderWorkerData.h" />
+    <ClInclude Include="Shader\WorkerQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

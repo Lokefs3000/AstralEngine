@@ -6,13 +6,15 @@
 #include <iostream>
 
 #include <Data/GraphicsCoreData.h>
-#include <data/WindowData.h>
+#include <Data/WindowData.h>
+#include <Data/AssetManagerData.h>
 
 #include <Graphics/Window.h>
 #include <Graphics/GraphicsCore.h>
 #include <Event/EventHandler.h>
 #include <Graphics/RendererCore.h>
 #include <Graphics/SwapChainManager.h>
+#include <Assets/AssetManager.h>
 
 #include "ImGui/imgui.h"
 
@@ -47,6 +49,7 @@ void EdEngine::Initialize(std::vector<std::string> Arguments)
 	m_Window = std::make_shared<Window>();
 	m_Graphics = std::make_shared<GraphicsCore>();
 	m_EventPoller = std::make_shared<EventHandler>();
+	m_EngineAssets = std::make_shared<AssetManager>();
 
 	WindowData wdata{};
 	wdata.Title = "Editor";
@@ -55,9 +58,17 @@ void EdEngine::Initialize(std::vector<std::string> Arguments)
 
 	m_Window->Initialize(&wdata);
 
+	AssetManagerData adata{};
+	adata.IsPackaged = false;
+	adata.SourceDir = u"core\\";
+
+	m_EngineAssets->Initialize(&adata);
+
 	GraphicsCoreData data{};
 	data.ProductName = "Editor";
 	data.TargetWindow = m_Window.get();
+	data.AssetManager = m_EngineAssets.get();
+	data.InitializeDebugRenderer = true;
 
 	m_Graphics->Initialize(&data);
 

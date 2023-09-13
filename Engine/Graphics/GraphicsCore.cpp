@@ -9,12 +9,14 @@
 #include "Data/ShaderManagerData.h"
 #include "Data/SwapChainManagerData.h"
 #include "Data/RendererCoreData.h"
+#include "Data/DebugRendererData.h"
 
 #include "DeviceManager.h"
 #include "SwapChainManager.h"
 #include "ShaderManager.h"
 #include "RendererCore.h"
 #include "Window.h"
+#include "DebugRenderer.h"
 
 #include "Utilities/VulkanUtils.h"
 #include "Utilities/SwapChainUtils.h"
@@ -141,17 +143,18 @@ void GraphicsCore::CreateSwapChainManager(GraphicsCoreData& _data)
     m_SwapChainManager->Initialize(&data);
 }
 
-void GraphicsCore::CreateShaderManager()
+void GraphicsCore::CreateShaderManager(GraphicsCoreData& _data)
 {
     m_ShaderManager = new ShaderManager();
 
     ShaderManagerData data{};
     data.WorkerCount = 2;
+    data.AssetManager = _data.AssetManager;
 
     m_ShaderManager->Initialize(&data);
 }
 
-void GraphicsCore::CreateRendererCore()
+void GraphicsCore::CreateRendererCore(GraphicsCoreData& _data)
 {
     m_RendererCore = new RendererCore();
 
@@ -164,8 +167,21 @@ void GraphicsCore::CreateRendererCore()
     data.Surface = m_Surface;
     data.SwapChainManager = m_SwapChainManager;
     data.MaxFramesInFlight = 2;
+    data.AssetManager = _data.AssetManager;
 
     m_RendererCore->Initialize(&data);
+}
+
+void GraphicsCore::CreateDebugRenderer(GraphicsCoreData& _data)
+{
+    m_DebugRenderer = new DebugRenderer();
+
+    DebugRendererData data{};
+    data.AssetManager = _data.AssetManager;
+    data.Renderer = m_RendererCore;
+    data.Shaders = m_ShaderManager;
+
+    m_DebugRenderer->Initialize(&data);
 }
 
 void GraphicsCore::Initialize(InitializableBasic* data)
@@ -178,8 +194,10 @@ void GraphicsCore::Initialize(InitializableBasic* data)
     CreateDeviceManager();
     CreateRenderPass(mdata);
     CreateSwapChainManager(mdata);
-    CreateShaderManager();
-    CreateRendererCore();
+    CreateShaderManager(mdata);
+    CreateRendererCore(mdata);
+    if (mdata.InitializeDebugRenderer)
+        CreateDebugRenderer(mdata);
 
     mR_Window = mdata.TargetWindow;
 }
@@ -192,6 +210,9 @@ void GraphicsCore::Shutdown()
     m_SwapChainManager->OnMinimizeEnd();
 
     vkDeviceWaitIdle(m_DeviceManager->GetLogicalDevice());
+
+    if (m_DebugRenderer != NULL)
+        m_DebugRenderer->Shutdown();
 
     m_RendererCore->Shutdown();
 
@@ -226,6 +247,11 @@ void GraphicsCore::RunRenderingThread(std::mutex* syncMutex, std::condition_vari
             RenderingThreadCompleted = false;
 
             m_RendererCore->DrawFrame();
+
+            if (m_DebugRenderer != NULL)
+                m_DebugRenderer->Render();
+
+            m_RendererCore->EndFrame();
 
             RenderingThreadCompleted = true;
             if (RenderingThreadCompleted && !(*mR_LogicThreadCompleted)) {

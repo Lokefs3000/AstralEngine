@@ -6,11 +6,13 @@
 
 ShaderCompiler::ShaderCompiler(uint8_t threadCount)
 {
+	glslang::InitializeProcess();
+
 	m_Workers.resize(threadCount);
 
 	for (size_t i = 0; i < threadCount; i++)
 	{
-		ShaderWorker* sworker = new ShaderWorker(m_WorkerDataMutex, m_WorkerDataCondition, m_WorkerData);
+		ShaderWorker* sworker = new ShaderWorker(m_WorkerData);
 		m_Workers[i] = std::make_pair(std::thread(&ShaderWorker::CompileShaders, sworker), sworker);
 		m_Workers[i].first.detach();
 	}
@@ -26,6 +28,8 @@ ShaderCompiler::~ShaderCompiler()
 	}
 
 	m_Workers.clear();
+
+	glslang::FinalizeProcess();
 }
 
 void ShaderCompiler::AddShader(std::u16string source, uint8_t identifier, std::function<void(ShaderWorkerResult)> onCompleted)
@@ -47,9 +51,5 @@ void ShaderCompiler::AddShader(std::u16string source, uint8_t identifier, std::f
 		break;
 	}
 
-	std::lock_guard lock(m_WorkerDataMutex);
-
-	m_WorkerData.push_back(data);
-
-	m_WorkerDataCondition.notify_one();
+	m_WorkerData.push(data);
 }

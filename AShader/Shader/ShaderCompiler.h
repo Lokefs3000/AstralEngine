@@ -8,20 +8,18 @@
 #include <functional>
 #include <mutex>
 
+#include "WorkerQueue.h"
+#include "ShaderWorkerData.h"
+
 #define VERTEX_SHADER 0
 #define FRAGMENT_SHADER 1
 
 class ShaderWorker;
-struct ShaderWorkerData;
-struct ShaderWorkerResult;
 
 class ShaderCompiler {
 private:
 	std::vector<std::pair<std::thread, ShaderWorker*>> m_Workers;
-	std::vector<ShaderWorkerData> m_WorkerData;
-
-	std::mutex m_WorkerDataMutex;
-	std::condition_variable m_WorkerDataCondition;
+	WorkerQueue<ShaderWorkerData> m_WorkerData;
 public:
 	ASEXPORT ShaderCompiler(uint8_t workerCount);
 	ASEXPORT ~ShaderCompiler();

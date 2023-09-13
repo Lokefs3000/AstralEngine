@@ -145,7 +145,7 @@ ShaderWorkerResult& ShaderWorker::CompileData(ShaderWorkerData& data)
     shader.setStrings(src, 1);
 
     EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
-
+	
     if (!shader.parse(&CreateResource(), 100, false, messages))
     {
         puts(shader.getInfoLog());
@@ -170,8 +170,8 @@ ShaderWorkerResult& ShaderWorker::CompileData(ShaderWorkerData& data)
 	return result;
 }
 
-ShaderWorker::ShaderWorker(std::mutex& mutex, std::condition_variable& condition, std::vector<ShaderWorkerData>& data)
-	: m_Mutex(mutex), m_Condition(condition), m_Data(data)
+ShaderWorker::ShaderWorker(WorkerQueue<ShaderWorkerData>& queue)
+	: m_WorkerQueue(queue)
 {
 }
 
@@ -188,21 +188,10 @@ void ShaderWorker::CompileShaders()
 {
 	while (!m_EndSignaled)
 	{
-		std::unique_lock lock(m_Mutex);
+		ShaderWorkerData data = m_WorkerQueue.pop();
 
-		while (m_Data.size() > 0)
-		{
-			lock.lock();
-			ShaderWorkerData& data = m_Data.back();
-			m_Data.pop_back();
-			lock.unlock();
-
-			ShaderWorkerResult& result = CompileData(data);
-
-			if (data.OnCompleted != NULL)
-				data.OnCompleted(result);
-		}
-
-		m_Condition.wait(lock, [this]{return m_Data.size() > 0 || m_EndSignaled;});
+		ShaderWorkerResult& result = CompileData(data);
+		if (data.OnCompleted != NULL)
+			data.OnCompleted(result);
 	}
 }

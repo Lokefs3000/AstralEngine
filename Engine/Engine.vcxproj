@@ -98,8 +98,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Assets\AssetManager.h" />
     <ClInclude Include="Basics\EventPoller.h" />
     <ClInclude Include="Basics\Initializable.h" />
+    <ClInclude Include="Data\AssetManagerData.h" />
     <ClInclude Include="Data\DebugRendererData.h" />
     <ClInclude Include="Data\DeviceManagerData.h" />
     <ClInclude Include="Data\GraphicsCoreData.h" />
@@ -126,6 +128,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Assets\AssetManager.cpp" />
     <ClCompile Include="Debug\VulkanDebug.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Event\EventHandler.cpp" />

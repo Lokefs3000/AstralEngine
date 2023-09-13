@@ -6,12 +6,16 @@
 
 #include "Basics/Initializable.h"
 
+class AssetManager;
+
 struct ShaderManagerData : public InitializableBasic
 {
 public:
 	VkInstance Instance;
 	VkDevice Device;
 	VkRenderPass RenderPass;
+
+	AssetManager* AssetManager;
 
 	uint8_t WorkerCount;
 };

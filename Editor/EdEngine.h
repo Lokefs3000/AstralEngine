@@ -8,12 +8,14 @@
 class Window;
 class GraphicsCore;
 class EventHandler;
+class AssetManager;
 
 class EdEngine {
 private:
 	std::shared_ptr<Window> m_Window;
 	std::shared_ptr<GraphicsCore> m_Graphics;
 	std::shared_ptr<EventHandler> m_EventPoller;
+	std::shared_ptr<AssetManager> m_EngineAssets;
 
 	std::mutex m_SyncingMutex;
 	std::condition_variable m_SyncingVariable;

@@ -16,6 +16,7 @@ class ShaderManager;
 class SwapChainManager;
 class RendererCore;
 class Window;
+class DebugRenderer;
 
 class GraphicsCore : public IInitializable {
 private:
@@ -27,10 +28,12 @@ private:
 
 	VkRenderPass m_RenderPass;
 
-	DeviceManager* m_DeviceManager;
-	SwapChainManager* m_SwapChainManager;
-	ShaderManager* m_ShaderManager;
-	RendererCore* m_RendererCore;
+	DeviceManager* m_DeviceManager = NULL;
+	SwapChainManager* m_SwapChainManager = NULL;
+	ShaderManager* m_ShaderManager = NULL;
+	RendererCore* m_RendererCore = NULL;
+
+	DebugRenderer* m_DebugRenderer = NULL;
 
 	Window* mR_Window;
 
@@ -46,8 +49,10 @@ private:
 	void CreateDeviceManager();
 	void CreateRenderPass(GraphicsCoreData& _data);
 	void CreateSwapChainManager(GraphicsCoreData& data);
-	void CreateShaderManager();
-	void CreateRendererCore();
+	void CreateShaderManager(GraphicsCoreData& _data);
+	void CreateRendererCore(GraphicsCoreData& _data);
+
+	void CreateDebugRenderer(GraphicsCoreData& _data);
 public:
 	void EXPORT Initialize(InitializableBasic* data) override;
 	void EXPORT Shutdown() override;

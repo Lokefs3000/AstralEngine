@@ -119,8 +119,7 @@ void RendererCore::DrawFrame()
 {
 	VkLocalCheckF(vkWaitForFences(mR_Device, 1, &m_InFlightFence[m_CurrentFrame], VK_TRUE, UINT64_MAX));
 
-	uint32_t imageIndex;
-	VkResult result = vkAcquireNextImageKHR(mR_Device, mR_SwapChainManager->GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphore[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
+	VkResult result = vkAcquireNextImageKHR(mR_Device, mR_SwapChainManager->GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphore[m_CurrentFrame], VK_NULL_HANDLE, &m_ImageIndex);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR) {
 		mR_SwapChainManager->RecreateSwapChain(false);
 		return;
@@ -135,8 +134,11 @@ void RendererCore::DrawFrame()
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	RecordCommandBuffer(m_CommandBuffer[m_CurrentFrame], imageIndex);
+	RecordCommandBuffer(m_CommandBuffer[m_CurrentFrame], m_ImageIndex);
+}
 
+void RendererCore::EndFrame()
+{
 	StopCommandBuffer(m_CommandBuffer[m_CurrentFrame]);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,10 +168,10 @@ void RendererCore::DrawFrame()
 	VkSwapchainKHR swapChains[] = { mR_SwapChainManager->GetSwapChain() };
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = swapChains;
-	presentInfo.pImageIndices = &imageIndex;
+	presentInfo.pImageIndices = &m_ImageIndex;
 	presentInfo.pResults = nullptr; // Optional
 
-	result = vkQueuePresentKHR(mR_PresentQueue, &presentInfo);
+	VkResult result = vkQueuePresentKHR(mR_PresentQueue, &presentInfo);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
 		mR_SwapChainManager->RecreateSwapChain(false);

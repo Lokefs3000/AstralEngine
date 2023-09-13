@@ -8,6 +8,8 @@
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <vulkan/vulkan.hpp>
 
+#include "WorkerQueue.h"
+
 struct ShaderWorkerData;
 struct ShaderWorkerResult;
 
@@ -18,13 +20,11 @@ private:
 
 	ShaderWorkerResult& CompileData(ShaderWorkerData& data);
 
-	std::mutex& m_Mutex;
-	std::condition_variable& m_Condition;
-	std::vector<ShaderWorkerData>& m_Data;
+	WorkerQueue<ShaderWorkerData>& m_WorkerQueue;
 
 	bool m_EndSignaled = false;
 public:
-	ShaderWorker(std::mutex& mutex, std::condition_variable& condition, std::vector<ShaderWorkerData>& data);
+	ShaderWorker(WorkerQueue<ShaderWorkerData>& queue);
 	~ShaderWorker();
 
 	void SignalEnd();
