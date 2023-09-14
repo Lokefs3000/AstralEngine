@@ -24,5 +24,5 @@ public:
 	ASEXPORT ShaderCompiler(uint8_t workerCount);
 	ASEXPORT ~ShaderCompiler();
 
-	void ASEXPORT AddShader(std::u16string source = u"", uint8_t identifier = VERTEX_SHADER, std::function<void(ShaderWorkerResult)> onCompleted = NULL);
+	void ASEXPORT AddShader(std::u16string vsource = u"", std::u16string fsource = u"", std::function<void(ShaderWorkerResult)> onCompleted = NULL);
 };

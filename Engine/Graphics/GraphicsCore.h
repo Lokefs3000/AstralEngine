@@ -17,6 +17,7 @@ class SwapChainManager;
 class RendererCore;
 class Window;
 class DebugRenderer;
+class BufferManager;
 
 class GraphicsCore : public IInitializable {
 private:
@@ -32,6 +33,7 @@ private:
 	SwapChainManager* m_SwapChainManager = NULL;
 	ShaderManager* m_ShaderManager = NULL;
 	RendererCore* m_RendererCore = NULL;
+	BufferManager* m_BufferManager = NULL;
 
 	DebugRenderer* m_DebugRenderer = NULL;
 
@@ -51,6 +53,7 @@ private:
 	void CreateSwapChainManager(GraphicsCoreData& data);
 	void CreateShaderManager(GraphicsCoreData& _data);
 	void CreateRendererCore(GraphicsCoreData& _data);
+	void CreateBufferManager(GraphicsCoreData& _data);
 
 	void CreateDebugRenderer(GraphicsCoreData& _data);
 public:

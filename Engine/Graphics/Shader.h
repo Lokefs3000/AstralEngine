@@ -20,6 +20,8 @@ private:
 
 	VkDevice mR_Device;
 
+	ShaderData* mR_TempShaderData = NULL;
+
 	void CreateShaders(ShaderData& data);
 	void CreatePipelineLayout(ShaderData& data);
 	void CreatePipeline(ShaderData& data);

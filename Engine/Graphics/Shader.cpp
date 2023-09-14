@@ -1,7 +1,13 @@
 #include "pch.h"
 #include "Shader.h"
 
+#include <array>
+
+#include <glm/glm.hpp>
+#include <Shader/ShaderCompiler.h>
+
 #include "Data/ShaderManagerData.h"
+#include "Data/BufferData.h"
 
 #include "Debug/VulkanDebug.h"
 
@@ -50,11 +56,34 @@ void Shader::CreatePipeline(ShaderData& data)
 	dynamicState.pDynamicStates = dynamicStates.data();
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertexInputInfo.vertexBindingDescriptionCount = 0;
-	vertexInputInfo.pVertexBindingDescriptions = nullptr; // Optional
-	vertexInputInfo.vertexAttributeDescriptionCount = 0;
-	vertexInputInfo.pVertexAttributeDescriptions = nullptr; // Optional
+	if (data.Use2DBuffers) {
+		VkVertexInputAttributeDescription vertexDescription{};
+		vertexDescription.binding = 0;
+		vertexDescription.location = 0;
+		vertexDescription.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vertexDescription.offset = offsetof(BufferData::_VertexColorBuffer::Vertex, BufferData::_VertexColorBuffer::Vertex::Vertice);
+
+		VkVertexInputAttributeDescription colorDescription{};
+		colorDescription.binding = 0;
+		colorDescription.location = 1;
+		colorDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+		colorDescription.offset = offsetof(BufferData::_VertexColorBuffer::Vertex, BufferData::_VertexColorBuffer::Vertex::Color);
+
+		std::array<VkVertexInputAttributeDescription, 2> descriptions;
+		descriptions[0] = vertexDescription;
+		descriptions[1] = colorDescription;
+
+		VkVertexInputBindingDescription bindingDescription{};
+		bindingDescription.binding = 0;
+		bindingDescription.stride = sizeof(glm::vec4) * 2;
+		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+		vertexInputInfo.vertexBindingDescriptionCount = 1;
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(descriptions.size());
+		vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+		vertexInputInfo.pVertexAttributeDescriptions = descriptions.data();
+	}
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -160,16 +189,30 @@ VkShaderModule Shader::CreateShaderModule(ShaderData& data, const std::vector<ui
 void Shader::Initialize(InitializableBasic* data)
 {
 	ShaderData& mdata = *(ShaderData*)data;
-
-	CreateShaders(mdata);
-	CreatePipelineLayout(mdata);
-	CreatePipeline(mdata);
+	mR_TempShaderData = new ShaderData(mdata);
 
 	mR_Device = mdata.Device;
+
+	mdata.Compiler->AddShader(mdata.VAsset, mdata.FAsset, [this, &mdata](ShaderWorkerResult result) {
+		std::cout << "Compiled shader.." << std::endl;
+
+		mR_TempShaderData->VertBytecode = result.VBytecode;
+		mR_TempShaderData->FragBytecode = result.FBytecode;
+
+		CreateShaders(*mR_TempShaderData);
+		CreatePipelineLayout(*mR_TempShaderData);
+		CreatePipeline(*mR_TempShaderData);
+
+		delete mR_TempShaderData;
+		mR_TempShaderData = NULL;
+		});
 }
 
 void Shader::Shutdown()
 {
+	if (mR_TempShaderData != NULL)
+		delete mR_TempShaderData;
+
 	vkDestroyPipeline(mR_Device, m_Pipeline, NULL);
 	vkDestroyPipelineLayout(mR_Device, m_Layout, NULL);
 

@@ -3,6 +3,7 @@
 #include "VarData.h"
 
 #include <vector>
+#include <memory>
 
 #include <vulkan/vulkan.h>
 
@@ -10,6 +11,8 @@
 
 struct RendererCoreData;
 class SwapChainManager;
+class Shader;
+class Buffer;
 
 class RendererCore : public IInitializable {
 private:
@@ -29,6 +32,8 @@ private:
 	VkQueue mR_PresentQueue;
 	uint32_t mR_MaxFramesInFlight;
 
+	bool m_PipelineBoundThisRun;
+
 	SwapChainManager* mR_SwapChainManager;
 
 	void CreateCommandPool(RendererCoreData& data);
@@ -43,4 +48,10 @@ public:
 
 	void EXPORT DrawFrame();
 	void EXPORT EndFrame();
+
+	void EXPORT BindShader(std::shared_ptr<Shader> shader);
+	void EXPORT DrawBuffer(std::shared_ptr<Buffer> buffer);
+	void EXPORT DrawBufferSpecified(std::shared_ptr<Buffer> buffer, uint64_t start, uint64_t count);
+
+	VkCommandPool GetCommandPool() { return m_CommandPool; }
 };

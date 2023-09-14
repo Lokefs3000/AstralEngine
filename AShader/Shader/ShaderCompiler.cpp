@@ -32,24 +32,12 @@ ShaderCompiler::~ShaderCompiler()
 	glslang::FinalizeProcess();
 }
 
-void ShaderCompiler::AddShader(std::u16string source, uint8_t identifier, std::function<void(ShaderWorkerResult)> onCompleted)
+void ShaderCompiler::AddShader(std::u16string vsource, std::u16string fsource, std::function<void(ShaderWorkerResult)> onCompleted)
 {
 	ShaderWorkerData data;
-	data.ShaderSource = source;
+	data.VShaderSource = vsource;
+	data.FShaderSource = fsource;
 	data.OnCompleted = onCompleted;
-
-	switch (identifier)
-	{
-	case 0:
-		data.StageBits = vk::ShaderStageFlagBits::eVertex;
-		break;
-	case 1:
-		data.StageBits = vk::ShaderStageFlagBits::eFragment;
-		break;
-	default:
-		data.StageBits = vk::ShaderStageFlagBits::eVertex;
-		break;
-	}
 
 	m_WorkerData.push(data);
 }

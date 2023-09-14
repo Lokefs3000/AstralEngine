@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <mutex>
+#include <string>
 
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <vulkan/vulkan.hpp>
@@ -18,7 +19,7 @@ private:
 	EShLanguage FindLanguage(vk::ShaderStageFlagBits shaderType);
 	TBuiltInResource& CreateResource();
 
-	ShaderWorkerResult& CompileData(ShaderWorkerData& data);
+	std::vector<uint32_t> CompileData(std::u16string& source, vk::ShaderStageFlagBits bits);
 
 	WorkerQueue<ShaderWorkerData>& m_WorkerQueue;
 

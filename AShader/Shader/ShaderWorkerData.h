@@ -9,15 +9,15 @@ typedef std::vector<uint32_t> ShaderBytecode;
 struct ShaderWorkerResult
 {
 public:
-	ShaderBytecode Bytecode;
+	ShaderBytecode VBytecode;
+	ShaderBytecode FBytecode;
 };
 
 struct ShaderWorkerData
 {
 public:
-	std::u16string ShaderSource;
-
-	vk::ShaderStageFlagBits StageBits;
+	std::u16string VShaderSource;
+	std::u16string FShaderSource;
 
 	std::function<void(ShaderWorkerResult& result)> OnCompleted;
 };

@@ -10,6 +10,7 @@
 #include "Data/SwapChainManagerData.h"
 #include "Data/RendererCoreData.h"
 #include "Data/DebugRendererData.h"
+#include "Data/BufferManagerData.h"
 
 #include "DeviceManager.h"
 #include "SwapChainManager.h"
@@ -17,6 +18,7 @@
 #include "RendererCore.h"
 #include "Window.h"
 #include "DebugRenderer.h"
+#include "BufferManager.h"
 
 #include "Utilities/VulkanUtils.h"
 #include "Utilities/SwapChainUtils.h"
@@ -150,6 +152,10 @@ void GraphicsCore::CreateShaderManager(GraphicsCoreData& _data)
     ShaderManagerData data{};
     data.WorkerCount = 2;
     data.AssetManager = _data.AssetManager;
+    data.Device = m_DeviceManager->GetLogicalDevice();
+    data.Format = m_SwapChainManager->GetSwapChainImageFormat();
+    data.Instance = m_Instance;
+    data.RenderPass = m_RenderPass;
 
     m_ShaderManager->Initialize(&data);
 }
@@ -172,6 +178,19 @@ void GraphicsCore::CreateRendererCore(GraphicsCoreData& _data)
     m_RendererCore->Initialize(&data);
 }
 
+void GraphicsCore::CreateBufferManager(GraphicsCoreData& _data)
+{
+    m_BufferManager = new BufferManager();
+
+    BufferManagerData data{};
+    data.Device = m_DeviceManager->GetLogicalDevice();
+    data.PhysicalDevice = m_DeviceManager->GetPhysicalDevice();
+    data.GraphicsQueue = m_DeviceManager->GetGraphicsQueue();
+    data.CommandPool = m_RendererCore->GetCommandPool();
+    
+    m_BufferManager->Initialize(&data);
+}
+
 void GraphicsCore::CreateDebugRenderer(GraphicsCoreData& _data)
 {
     m_DebugRenderer = new DebugRenderer();
@@ -180,6 +199,7 @@ void GraphicsCore::CreateDebugRenderer(GraphicsCoreData& _data)
     data.AssetManager = _data.AssetManager;
     data.Renderer = m_RendererCore;
     data.Shaders = m_ShaderManager;
+    data.BufferManager = m_BufferManager;
 
     m_DebugRenderer->Initialize(&data);
 }
@@ -196,6 +216,7 @@ void GraphicsCore::Initialize(InitializableBasic* data)
     CreateSwapChainManager(mdata);
     CreateShaderManager(mdata);
     CreateRendererCore(mdata);
+    CreateBufferManager(mdata);
     if (mdata.InitializeDebugRenderer)
         CreateDebugRenderer(mdata);
 

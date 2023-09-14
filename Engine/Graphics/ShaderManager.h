@@ -17,16 +17,18 @@ struct ShaderData;
 class ShaderManager : public IInitializable {
 private:
 	VkDevice mR_Device;
+	VkInstance mR_Instance;
+	VkRenderPass mR_RenderPass;
+	VkFormat mR_Format;
 
 	ShaderCompiler* m_Compiler;
 
 	AssetManager* mR_AssetManager;
 
 	std::vector<std::pair<std::pair<xg::Guid, xg::Guid>, std::shared_ptr<Shader>>> m_Shaders;
-	std::map<std::pair<xg::Guid, xg::Guid>, ShaderData*> m_ShaderData;
 public:
 	void EXPORT Initialize(InitializableBasic* data) override;
 	void EXPORT Shutdown() override;
 
-	std::shared_ptr<Shader> EXPORT GetShader(xg::Guid vasset, xg::Guid fasset);
+	std::shared_ptr<Shader> EXPORT GetShader(xg::Guid vasset, xg::Guid fasset, bool is2D);
 };

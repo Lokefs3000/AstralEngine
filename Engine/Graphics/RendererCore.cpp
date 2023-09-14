@@ -9,6 +9,8 @@
 #include "Utilities/DeviceUtils.h"
 
 #include "SwapChainManager.h"
+#include "Shader.h"
+#include "Buffer.h"
 
 #include "Debug/VulkanDebug.h"
 
@@ -117,6 +119,8 @@ void RendererCore::Shutdown()
 
 void RendererCore::DrawFrame()
 {
+	m_PipelineBoundThisRun = false;
+
 	VkLocalCheckF(vkWaitForFences(mR_Device, 1, &m_InFlightFence[m_CurrentFrame], VK_TRUE, UINT64_MAX));
 
 	VkResult result = vkAcquireNextImageKHR(mR_Device, mR_SwapChainManager->GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphore[m_CurrentFrame], VK_NULL_HANDLE, &m_ImageIndex);
@@ -181,4 +185,67 @@ void RendererCore::EndFrame()
 	}
 
 	m_CurrentFrame = (m_CurrentFrame + 1) % mR_MaxFramesInFlight;
+}
+
+void RendererCore::BindShader(std::shared_ptr<Shader> shader)
+{
+	if (shader->GetPipeline() == NULL)
+		return; //Shader error/waiting for compile..
+
+	vkCmdBindPipeline(m_CommandBuffer[m_CurrentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, shader->GetPipeline());
+
+	VkViewport viewport{};
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = (float)mR_SwapChainManager->GetSwapChainExtent().width;
+	viewport.height = (float)mR_SwapChainManager->GetSwapChainExtent().height;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	vkCmdSetViewport(m_CommandBuffer[m_CurrentFrame], 0, 1, &viewport);
+
+	VkRect2D scissor{};
+	scissor.offset = { 0, 0 };
+	scissor.extent = mR_SwapChainManager->GetSwapChainExtent();
+	vkCmdSetScissor(m_CommandBuffer[m_CurrentFrame], 0, 1, &scissor);
+
+	m_PipelineBoundThisRun = true;
+}
+
+void RendererCore::DrawBuffer(std::shared_ptr<Buffer> buffer)
+{
+	if (buffer.get() == NULL || !m_PipelineBoundThisRun)
+		return;
+
+	if (buffer->GetIndexBuffer() != NULL) {
+
+	}
+	else {
+		VkBuffer vertexBuffers[] = { buffer->GetVertexBuffer() };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(m_CommandBuffer[m_CurrentFrame], 0, 1, vertexBuffers, offsets);
+
+		vkCmdDraw(m_CommandBuffer[m_CurrentFrame], buffer->GetVerticeCount(), 0, 0, 0);
+	}
+}
+
+void RendererCore::DrawBufferSpecified(std::shared_ptr<Buffer> buffer, uint64_t start, uint64_t count)
+{
+	if (buffer.get() == NULL || !m_PipelineBoundThisRun)
+		return;
+
+	if (buffer->GetIndexBuffer() != NULL) {
+
+	}
+	else {
+		if (buffer->GetVerticeCount() > count)
+			count = buffer->GetVerticeCount();
+		if (buffer->GetVerticeCount() > start)
+			start = buffer->GetVerticeCount();
+
+		VkBuffer vertexBuffers[] = { buffer->GetVertexBuffer() };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(m_CommandBuffer[m_CurrentFrame], 0, 1, vertexBuffers, offsets);
+
+		vkCmdDraw(m_CommandBuffer[m_CurrentFrame], count, 0, start, 0);
+	}
 }

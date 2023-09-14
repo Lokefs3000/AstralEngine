@@ -132,13 +132,13 @@ TBuiltInResource& ShaderWorker::CreateResource()
 	return Resources;
 }
 
-ShaderWorkerResult& ShaderWorker::CompileData(ShaderWorkerData& data)
+ShaderBytecode ShaderWorker::CompileData(std::u16string& source, vk::ShaderStageFlagBits bits)
 {
-	ShaderWorkerResult result{};
+	ShaderBytecode code;
 
-    EShLanguage language = FindLanguage(data.StageBits);
+    EShLanguage language = FindLanguage(bits);
     
-    std::string str = std::string(data.ShaderSource.begin(), data.ShaderSource.end());
+    std::string str = std::string(source.begin(), source.end());
     const char* src[] = { str.c_str() };
 
     glslang::TShader shader(language);
@@ -146,12 +146,12 @@ ShaderWorkerResult& ShaderWorker::CompileData(ShaderWorkerData& data)
 
     EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
 	
-    if (!shader.parse(&CreateResource(), 100, false, messages))
+    if (!shader.parse(&CreateResource(), 100, true, messages))
     {
         puts(shader.getInfoLog());
         puts(shader.getInfoDebugLog());
 		fflush(stdout);
-        return result;
+        return code;
     }
 
 	glslang::TProgram program;
@@ -162,12 +162,12 @@ ShaderWorkerResult& ShaderWorker::CompileData(ShaderWorkerData& data)
 		puts(shader.getInfoLog());
 		puts(shader.getInfoDebugLog());
 		fflush(stdout);
-		return result;
+		return code;
 	}
 
-	glslang::GlslangToSpv(*program.getIntermediate(language), result.Bytecode);
+	glslang::GlslangToSpv(*program.getIntermediate(language), code);
 
-	return result;
+	return code;
 }
 
 ShaderWorker::ShaderWorker(WorkerQueue<ShaderWorkerData>& queue)
@@ -190,7 +190,11 @@ void ShaderWorker::CompileShaders()
 	{
 		ShaderWorkerData data = m_WorkerQueue.pop();
 
-		ShaderWorkerResult& result = CompileData(data);
+		ShaderWorkerResult result{};
+
+		result.VBytecode = CompileData(data.VShaderSource, vk::ShaderStageFlagBits::eVertex);
+		result.FBytecode = CompileData(data.FShaderSource, vk::ShaderStageFlagBits::eFragment);
+
 		if (data.OnCompleted != NULL)
 			data.OnCompleted(result);
 	}

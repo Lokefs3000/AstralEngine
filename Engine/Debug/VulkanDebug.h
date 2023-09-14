@@ -21,4 +21,5 @@ public:
 	if (result != VK_SUCCESS) { \
 		const char* err = string_VkResult(result); \
 		Error(err); \
+		return; \
 	}
